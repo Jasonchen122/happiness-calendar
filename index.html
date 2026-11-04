@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>幸福季行事曆｜盈欣區小組</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F6F7F1;
+    --paper: #FFFFFF;
+    --ink: #26312B;
+    --muted: #5F6B63;
+    --sage: #4F7A55;
+    --sage-soft: #E3ECDD;
+    --sun: #F5C451;
+    --sun-soft: #FFF3CF;
+    --line: #D9E0D2;
+    --alert: #B3412E;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  }
+  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 120px; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+
+  header.top { padding: 8px 0 20px; }
+  header.top h1 { font-size: 30px; font-weight: 700; margin: 0; letter-spacing: 0.02em; }
+  header.top p { margin: 4px 0 0; color: var(--muted); font-size: 16px; }
+
+  .demo { background: var(--sun-soft); border: 1px solid var(--sun); border-radius: 12px; padding: 10px 14px; font-size: 15px; margin-bottom: 16px; }
+
+  section.pick { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px 8px; margin-bottom: 24px; }
+  section.pick h2 { font-size: 20px; font-weight: 700; margin: 0 0 12px; }
+  .cat { margin-bottom: 12px; }
+  .cat-name { font-size: 15px; color: var(--muted); margin-bottom: 6px; }
+  .names { display: flex; flex-wrap: wrap; gap: 8px; }
+  .name-btn {
+    min-height: 48px; padding: 8px 18px; border-radius: 24px;
+    border: 1.5px solid var(--sage); background: var(--sage-soft); color: var(--ink);
+    font-size: 19px; font-weight: 500;
+  }
+  .name-btn:active { background: var(--sage); color: #fff; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .bar h2 { font-size: 22px; margin: 0; }
+  .toggle { display: flex; border: 1.5px solid var(--sage); border-radius: 10px; overflow: hidden; }
+  .toggle button { border: 0; background: var(--paper); padding: 6px 14px; font-size: 16px; color: var(--ink); min-height: 40px; }
+  .toggle button[aria-pressed="true"] { background: var(--sage); color: #fff; }
+  .updated { font-size: 14px; color: var(--muted); margin: -4px 0 12px; display: flex; gap: 10px; align-items: center; }
+  .link-btn { border: 0; background: none; color: var(--sage); text-decoration: underline; padding: 4px; font-size: 14px; }
+
+  .day { display: flex; gap: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+  .cal { flex: 0 0 64px; border-radius: 10px; overflow: hidden; text-align: center; border: 1px solid var(--line); align-self: flex-start; }
+  .cal .m { background: var(--sage); color: #fff; font-size: 14px; padding: 2px 0; }
+  .cal .d { background: var(--sun-soft); font-size: 30px; font-weight: 700; line-height: 1.25; padding: 4px 0 0; }
+  .cal .w { background: var(--sun-soft); font-size: 12px; color: var(--muted); padding-bottom: 4px; }
+  .acts { flex: 1; min-width: 0; }
+  .meeting { display: inline-block; font-size: 14px; background: var(--sun); color: var(--ink); border-radius: 6px; padding: 1px 8px; margin-bottom: 6px; }
+  .act { padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .act:last-child { border-bottom: 0; }
+  .act b { font-weight: 700; margin-right: 6px; }
+  .empty { color: var(--muted); font-size: 16px; padding-top: 4px; }
+
+  .table-wrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; }
+  table { border-collapse: collapse; font-size: 15px; white-space: nowrap; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  thead th { background: var(--sage-soft); font-weight: 700; }
+  thead tr:first-child th { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .sticky { position: sticky; left: 0; background: var(--sun-soft); z-index: 1; font-weight: 700; }
+  thead .sticky { background: var(--sage-soft); }
+  td.blank { background: #FAFBF8; }
+
+  .edit-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .back { border: 1.5px solid var(--line); background: var(--paper); border-radius: 10px; padding: 6px 14px; min-height: 44px; font-size: 17px; }
+  .edit-head h2 { font-size: 24px; margin: 0; }
+  .hint { color: var(--muted); font-size: 16px; margin: 0 0 16px; }
+  .field { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; gap: 14px; }
+  .field .cal { flex-basis: 56px; }
+  .field .cal .d { font-size: 24px; }
+  .field-body { flex: 1; min-width: 0; }
+  .field input {
+    width: 100%; font: inherit; font-size: 19px; padding: 12px; min-height: 52px;
+    border: 1.5px solid var(--line); border-radius: 10px; background: #FCFDFB; color: var(--ink);
+  }
+  .field input:focus { border-color: var(--sage); background: #fff; }
+  .others { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .clear { border: 0; background: none; color: var(--alert); font-size: 15px; padding: 6px 0 0; text-decoration: underline; }
+
+  .save-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; background: var(--paper);
+    border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    display: flex; gap: 10px; justify-content: center;
+  }
+  .save-bar button { min-height: 54px; border-radius: 12px; font-size: 20px; font-weight: 700; }
+  .save-bar .cancel { flex: 0 0 110px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); }
+  .save-bar .save { flex: 1; max-width: 420px; border: 0; background: var(--sage); color: #fff; }
+  .save-bar .save[disabled] { opacity: 0.6; }
+  .error { color: var(--alert); font-size: 16px; margin: 0 0 12px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 18px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .toast.show { opacity: 1; }
+  .loading { text-align: center; color: var(--muted); padding: 40px 0; }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <h1>幸福季行事曆</h1>
+    <p>盈欣區小組｜11 月到 12 月的主日活動</p>
+  </header>
+
+  <div id="demo" class="demo" hidden>目前是示範模式：資料還沒有連到試算表，填寫的內容不會保存。</div>
+
+  <!-- 首頁 -->
+  <div id="home">
+    <section class="pick">
+      <h2>點你的名字，填寫或修改活動</h2>
+      <div id="pickList"></div>
+    </section>
+
+    <div class="bar">
+      <h2>全部小組的活動</h2>
+      <div class="toggle" role="group" aria-label="切換顯示方式">
+        <button id="btnCards" aria-pressed="true">依日期</button>
+        <button id="btnTable" aria-pressed="false">表格</button>
+      </div>
+    </div>
+    <div class="updated"><span id="updatedAt"></span><button class="link-btn" id="btnRefresh">重新整理</button></div>
+
+    <div id="loading" class="loading">正在載入行事曆…</div>
+    <p id="loadError" class="error" hidden></p>
+    <div id="cards"></div>
+    <div id="tableView" hidden></div>
+  </div>
+
+  <!-- 填寫頁 -->
+  <div id="edit" hidden>
+    <div class="edit-head">
+      <button class="back" id="btnBack">← 回行事曆</button>
+    </div>
+    <h2 id="editTitle" style="font-size:24px;margin:8px 0 4px"></h2>
+    <p class="hint">每個日期填一個活動，沒有活動就空著。要刪除，清掉文字後按「儲存」。</p>
+    <p id="saveError" class="error" hidden></p>
+    <div id="fields"></div>
+  </div>
+</main>
+
+<div class="save-bar" id="saveBar" hidden>
+  <button class="cancel" id="btnCancel">取消</button>
+  <button class="save" id="btnSave">儲存</button>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // ▼▼▼ 部署 Apps Script 後，把網址貼在下面的引號中間 ▼▼▼
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
+  // ▲▲▲
+
+  const DEMO = {
+    ok: true,
+    dates: ['11月1日','11月8日','11月15日','11月22日','11月29日','12月6日','12月13日','12月20日','12月27日'],
+    groups: [
+      { category: '壯世代', names: ['玉娟','穎霞'] },
+      { category: '中青組', names: ['郁珊','月娥','彥均','茗莉','敬勳','珊羽','奉建'] },
+      { category: '媽媽組', names: ['依寧','若慈'] },
+      { category: '親子組', names: ['Joanna'] },
+      { category: '社青組', names: ['Apple','芬芬'] }
+    ],
+    data: {
+      '11月1日': { '郁珊': '山林慢遊福音活動', 'Apple': '桌遊福音活動' },
+      '11月8日': { '茗莉': '情緖覺察桌遊活動', '珊羽': '精油活動' },
+      '11月15日': { '玉娟': '卡啦OK福音活動', '茗莉': '劍潭山漫遊' },
+      '11月22日': { '茗莉': '投票日休息', '珊羽': '趣味桌遊' }
+    },
+    meetings: { '11月8日': '小組長會議' }
+  };
+
+  let state = null;
+  let view = 'cards';
+  let editing = null;
+
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  function splitDate(date) {
+    const m = date.match(/(\d+)月(\d+)日/);
+    return m ? { m: m[1] + '月', d: m[2] } : { m: '', d: date };
+  }
+  function calBlock(date) {
+    const p = splitDate(date);
+    const box = el('div', 'cal');
+    box.append(el('div', 'm', p.m), el('div', 'd', p.d), el('div', 'w', '主日'));
+    return box;
+  }
+  function allNames() { return state.groups.flatMap(g => g.names); }
+  function act(date, name) { return ((state.data[date] || {})[name] || '').trim(); }
+
+  async function load() {
+    $('loading').hidden = false;
+    $('loadError').hidden = true;
+    try {
+      if (!API_URL) {
+        $('demo').hidden = false;
+        state = state || JSON.parse(JSON.stringify(DEMO));
+      } else {
+        const res = await fetch(API_URL, { cache: 'no-store' });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || '讀取失敗');
+        state = json;
+      }
+      $('updatedAt').textContent = '更新時間 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+      renderHome();
+    } catch (e) {
+      $('loadError').textContent = '行事曆載入失敗，請檢查網路後按「重新整理」。';
+      $('loadError').hidden = false;
+    } finally {
+      $('loading').hidden = true;
+    }
+  }
+
+  function renderHome() {
+    const pick = $('pickList');
+    pick.replaceChildren();
+    state.groups.forEach(g => {
+      const wrap = el('div', 'cat');
+      wrap.append(el('div', 'cat-name', g.category));
+      const names = el('div', 'names');
+      g.names.forEach(name => {
+        const b = el('button', 'name-btn', name);
+        b.addEventListener('click', () => openEdit(name));
+        names.append(b);
+      });
+      wrap.append(names);
+      pick.append(wrap);
+    });
+    renderCards();
+    renderTable();
+    setView(view);
+  }
+
+  function renderCards() {
+    const box = $('cards');
+    box.replaceChildren();
+    state.dates.forEach(date => {
+      const card = el('article', 'day');
+      card.append(calBlock(date));
+      const acts = el('div', 'acts');
+      const meeting = (state.meetings || {})[date];
+      if (meeting) acts.append(el('span', 'meeting', meeting));
+      let count = 0;
+      state.groups.forEach(g => g.names.forEach(name => {
+        const a = act(date, name);
+        if (!a) return;
+        count++;
+        const row = el('div', 'act');
+        row.append(el('b', null, name), document.createTextNode(a));
+        acts.append(row);
+      }));
+      if (!count) acts.append(el('div', 'empty', '還沒有活動'));
+      card.append(acts);
+      box.append(card);
+    });
+  }
+
+  function renderTable() {
+    const table = el('table');
+    const thead = el('thead');
+    const r1 = el('tr');
+    r1.append(el('th', 'sticky', ''));
+    state.groups.forEach(g => { const th = el('th', null, g.category); th.colSpan = g.names.length; r1.append(th); });
+    const r2 = el('tr');
+    r2.append(el('th', 'sticky', '日期'));
+    allNames().forEach(n => r2.append(el('th', null, n)));
+    thead.append(r1, r2);
+    const tbody = el('tbody');
+    state.dates.forEach(date => {
+      const tr = el('tr');
+      tr.append(el('td', 'sticky', date));
+      allNames().forEach(n => {
+        const a = act(date, n);
+        tr.append(el('td', a ? null : 'blank', a));
+      });
+      tbody.append(tr);
+    });
+    table.append(thead, tbody);
+    const wrap = el('div', 'table-wrap');
+    wrap.append(table);
+    $('tableView').replaceChildren(wrap);
+  }
+
+  function setView(v) {
+    view = v;
+    $('cards').hidden = v !== 'cards';
+    $('tableView').hidden = v !== 'table';
+    $('btnCards').setAttribute('aria-pressed', v === 'cards');
+    $('btnTable').setAttribute('aria-pressed', v === 'table');
+  }
+
+  function openEdit(name) {
+    editing = name;
+    $('editTitle').textContent = name + ' 的活動';
+    $('saveError').hidden = true;
+    const box = $('fields');
+    box.replaceChildren();
+    state.dates.forEach(date => {
+      const f = el('div', 'field');
+      f.append(calBlock(date));
+      const body = el('div', 'field-body');
+      const input = el('input');
+      input.type = 'text';
+      input.maxLength = 40;
+      input.placeholder = '例：桌遊福音活動';
+      input.value = act(date, name);
+      input.dataset.date = date;
+      input.setAttribute('aria-label', date + ' 的活動');
+      body.append(input);
+      const clear = el('button', 'clear', '清除這天');
+      clear.type = 'button';
+      clear.addEventListener('click', () => { input.value = ''; input.focus(); });
+      body.append(clear);
+      const others = allNames().filter(n => n !== name && act(date, n)).map(n => n + '：' + act(date, n));
+      if (others.length) body.append(el('div', 'others', '這天其他小組｜' + others.join('、')));
+      f.append(body);
+      box.append(f);
+    });
+    $('home').hidden = true;
+    $('edit').hidden = false;
+    $('saveBar').hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  function closeEdit() {
+    editing = null;
+    $('edit').hidden = true;
+    $('saveBar').hidden = true;
+    $('home').hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  async function save() {
+    const btn = $('btnSave');
+    const entries = {};
+    document.querySelectorAll('#fields input').forEach(i => { entries[i.dataset.date] = i.value.trim(); });
+    btn.disabled = true;
+    btn.textContent = '儲存中…';
+    $('saveError').hidden = true;
+    try {
+      if (!API_URL) {
+        Object.keys(entries).forEach(d => { state.data[d] = state.data[d] || {}; state.data[d][editing] = entries[d]; });
+      } else {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ name: editing, entries }) });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || '儲存失敗');
+        state = json;
+      }
+      renderHome();
+      closeEdit();
+      toast('已儲存，謝謝！');
+    } catch (e) {
+      $('saveError').textContent = '儲存沒有成功，請檢查網路後再按一次「儲存」。';
+      $('saveError').hidden = false;
+      window.scrollTo(0, 0);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '儲存';
+    }
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  $('btnCards').addEventListener('click', () => setView('cards'));
+  $('btnTable').addEventListener('click', () => setView('table'));
+  $('btnRefresh').addEventListener('click', load);
+  $('btnBack').addEventListener('click', closeEdit);
+  $('btnCancel').addEventListener('click', closeEdit);
+  $('btnSave').addEventListener('click', save);
+
+  load();
+</script>
+</body>
+</html>
