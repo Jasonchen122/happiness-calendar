@@ -80,6 +80,17 @@
   .evt-banner strong { display: block; font-size: 1rem; }
   .evt-banner span { font-size: 0.875rem; }
 
+  .week-evts { grid-column: 1 / -1; border-top: 1px dashed #C9CFC8; padding-top: 10px; }
+  .week-label { font-size: 0.8125rem; color: var(--muted); margin-bottom: 6px; }
+  .wevt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: var(--brand-soft); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; }
+  .wevt .wd { background: var(--paper); border-radius: 6px; padding: 2px 6px; text-align: center; min-width: 3.2rem; line-height: 1.3; }
+  .wevt .wd b { display: block; font-size: 1rem; }
+  .wevt .wd small { font-size: 0.75rem; color: var(--muted); }
+  .wevt .wt { flex: 1; min-width: 0; }
+  .wevt .wt strong { display: block; color: var(--brand); font-size: 1rem; }
+  .wevt .wt span { font-size: 0.875rem; color: var(--muted); }
+  .wevt .arrow { color: var(--brand); }
+  .tlink { border: 0; background: none; color: var(--brand); text-decoration: underline; padding: 0; font-size: inherit; text-align: left; display: block; }
   .table-wrap { overflow-x: auto; }
   table { border-collapse: collapse; font-size: 0.9375rem; white-space: nowrap; background: var(--paper); }
   th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
@@ -220,7 +231,7 @@
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
   const START_YEAR = 2026;
-  const VERSION = '1106-1700';
+  const VERSION = '1106-1730';
   const FONT_SIZES = [['小', 15], ['中', 16], ['大', 18.5], ['特大', 21]];
   let fontPx = 16;
   try { fontPx = Number(localStorage.getItem('fontPx')) || 16; } catch (e) {}
@@ -275,6 +286,15 @@
     const wd = new Date(y, m - 1, d).getDay();
     return { m: m + '月', d: String(d), w: '週' + WEEK[wd], wd: wd, short: `${m}/${d}` };
   }
+  function addDays(iso, n) {
+    const [y, m, d] = iso.split('-').map(Number);
+    const t = new Date(y, m - 1, d + n);
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  }
+  function weekEvents(label) {
+    const start = weeklyToISO(label), end = addDays(start, 6);
+    return S.events.filter(ev => ev.date >= start && ev.date <= end);
+  }
   function eventWhen(ev) {
     const p = parts(ev.date);
     return `${p.short}（${p.w.slice(1)}）${ev.time ? ' ' + ev.time : ''}`;
@@ -314,12 +334,18 @@
   }
 
   function go(r, replace) {
+    if (!replace) history.replaceState(Object.assign({}, route, { y: window.scrollY }), '');
     route = r;
     if (replace) history.replaceState(r, ''); else history.pushState(r, '');
     render();
     window.scrollTo(0, 0);
   }
-  window.addEventListener('popstate', e => { route = e.state || { v: 'cal' }; render(); });
+  window.addEventListener('popstate', e => {
+    route = e.state || { v: 'cal' };
+    render();
+    const y = route.y || 0;
+    (window.requestAnimationFrame || setTimeout)(() => window.scrollTo(0, y));
+  });
 
   function dock(...buttons) {
     const d = document.getElementById('dock');
@@ -390,17 +416,29 @@
         acts.append(h('div', { class: 'act', style: catVars(g.category) }, h('b', null, name), h('span', null, a)));
       }));
       if (!n) acts.append(h('div', { class: 'empty' }, '還沒有小組活動'));
-      return h('div', { class: 'card day' + (iso < S.today ? ' past' : '') },
+      const wev = weekEvents(label);
+      const weekBox = wev.length ? h('div', { class: 'week-evts' },
+        h('div', { class: 'week-label' }, `⚑ 本週活動（${p.short}–${parts(addDays(iso, 6)).short}）`),
+        wev.map(ev => {
+          const ep = parts(ev.date), st = signupStats(ev);
+          return h('button', { class: 'wevt', onclick: () => go({ v: 'event', id: ev.id }) },
+            h('div', { class: 'wd' }, h('b', null, ep.short), h('small', null, ep.w)),
+            h('div', { class: 'wt' }, h('strong', null, ev.name + (ev.time ? ' ' + ev.time : '')),
+              h('span', null, `${statusOf(ev)[0]}・已報名 ${st.groups} / ${leaders().length} 組・${st.people} 人`)),
+            h('span', { class: 'arrow' }, '›'));
+        })) : null;
+      return h('div', { class: 'card day' + (addDays(iso, 6) < S.today ? ' past' : '') },
         h('div', { class: 'date' }, h('div', { class: 'm' }, p.m), h('div', { class: 'd' }, p.d), h('div', { class: 'w' }, p.w)),
-        acts);
+        acts, weekBox);
     }));
   }
 
   function calTable() {
-    const r1 = h('tr', null, h('th', { class: 'sticky' }, ''), groups().map(g => h('th', { class: 'cat-head', colspan: g.names.length, style: catVars(g.category) }, g.category)));
-    const r2 = h('tr', null, h('th', { class: 'sticky' }, '日期'), leaders().map(n => h('th', null, n)));
+    const r1 = h('tr', null, h('th', { class: 'sticky' }, ''), h('th', null, ''), groups().map(g => h('th', { class: 'cat-head', colspan: g.names.length, style: catVars(g.category) }, g.category)));
+    const r2 = h('tr', null, h('th', { class: 'sticky' }, '日期'), h('th', null, '本週活動'), leaders().map(n => h('th', null, n)));
     const body = h('tbody', null, S.dates.map(label => h('tr', null,
       h('td', { class: 'sticky' }, label),
+      h('td', null, weekEvents(label).map(ev => h('button', { class: 'tlink', onclick: () => go({ v: 'event', id: ev.id }) }, `${parts(ev.date).short} ${ev.name}`))),
       leaders().map(n => h('td', null, ((S.data[label] || {})[n] || ''))))));
     return h('div', { class: 'card table-wrap' }, h('table', null, h('thead', null, r1, r2), body));
   }
