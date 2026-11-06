@@ -168,6 +168,7 @@
   .dock {
     position: fixed; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.96);
     border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 10;
   }
   .dock .inner { max-width: 680px; margin: 0 auto; display: flex; gap: 10px; }
   .btn { min-height: 54px; border-radius: 12px; font-size: 1.1875rem; font-weight: 700; border: 0; padding: 0 18px; }
@@ -219,7 +220,7 @@
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
   const START_YEAR = 2026;
-  const VERSION = '1106-1600';
+  const VERSION = '1106-1700';
   const FONT_SIZES = [['小', 15], ['中', 16], ['大', 18.5], ['特大', 21]];
   let fontPx = 16;
   try { fontPx = Number(localStorage.getItem('fontPx')) || 16; } catch (e) {}
@@ -278,7 +279,14 @@
     const p = parts(ev.date);
     return `${p.short}（${p.w.slice(1)}）${ev.time ? ' ' + ev.time : ''}`;
   }
-  function eventOpen(ev) { return ev.status !== '關閉' && !(ev.deadline && S.today > ev.deadline); }
+  function eventOpen(ev) { return ev.status !== '關閉' && !(ev.deadline && S.today > ev.deadline) && ev.date >= S.today; }
+  function statusOf(ev) {
+    if (ev.date < S.today) return ['已結束', 'closed'];
+    if (ev.status === '關閉') return ['已關閉', 'closed'];
+    if (ev.deadline && S.today > ev.deadline) return ['已截止', 'closed'];
+    return ['報名中', 'open'];
+  }
+  let showPast = false;
   function signupStats(ev) {
     const s = S.signups[ev.id] || {};
     const names = Object.keys(s).filter(n => s[n].count > 0);
@@ -399,13 +407,13 @@
 
   /* ---------- 活動列表與詳情 ---------- */
   function viewEvents() {
-    const list = S.events.filter(ev => ev.date >= S.today || eventOpen(ev));
-    const past = S.events.filter(ev => !list.includes(ev));
+    const list = S.events.filter(ev => ev.date >= S.today);
+    const past = S.events.filter(ev => ev.date < S.today).reverse();
     const card = ev => {
       const st = signupStats(ev);
-      const open = eventOpen(ev);
+      const [label, cls] = statusOf(ev);
       return h('button', { class: 'card event', onclick: () => go({ v: 'event', id: ev.id }) },
-        h('h3', null, ev.name, h('span', { class: 'status ' + (open ? 'open' : 'closed') }, open ? '報名中' : '已截止')),
+        h('h3', null, ev.name, h('span', { class: 'status ' + cls }, label)),
         h('div', { class: 'meta' }, eventWhen(ev) + (ev.place ? '｜' + ev.place : '')),
         ev.deadline ? h('div', { class: 'meta' }, '報名截止 ' + parts(ev.deadline).short) : null,
         h('div', { class: 'bar' }, h('i', { style: `width:${Math.round(st.groups / leaders().length * 100)}%` })),
@@ -414,8 +422,10 @@
     setApp(
       h('div', { class: 'page-title' }, '活動報名'),
       h('p', { class: 'sub' }, '點活動可以看到各小組的報名名單'),
-      list.length ? list.map(card) : h('div', { class: 'card', style: 'padding:24px;text-align:center;color:var(--muted)' }, '目前沒有開放報名的活動'),
-      past.length ? [h('div', { class: 'section-label' }, '已結束的活動'), past.map(card)] : null,
+      list.length ? list.map(card) : h('div', { class: 'card', style: 'padding:24px;text-align:center;color:var(--muted)' }, '目前沒有即將舉辦的活動'),
+      past.length ? h('button', { class: 'refresh', style: 'display:block;margin:20px auto 8px', 'aria-expanded': showPast, onclick: () => { showPast = !showPast; render(); } },
+        showPast ? '收起過去的活動' : `查看過去的活動（共 ${past.length} 個）`) : null,
+      past.length && showPast ? [h('div', { class: 'section-label' }, '過去的活動（最新的在上面）'), past.map(card)] : null,
       h('button', { class: 'admin-link', onclick: () => go(adminPw ? { v: 'admin' } : { v: 'login' }) }, '管理者入口'),
       footer());
     dock(fillBtn());
@@ -435,7 +445,7 @@
     } }, '複製提醒文字') : null;
     setApp(
       h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
-      h('div', { class: 'page-title' }, ev.name, h('span', { class: 'status ' + (open ? 'open' : 'closed') }, open ? '報名中' : '已截止')),
+      h('div', { class: 'page-title' }, ev.name, h('span', { class: 'status ' + statusOf(ev)[1] }, statusOf(ev)[0])),
       h('div', { class: 'meta' }, eventWhen(ev) + (ev.place ? '｜' + ev.place : '')),
       ev.deadline ? h('div', { class: 'meta' }, '報名截止 ' + parts(ev.deadline).short) : null,
       h('div', { class: 'dash' },
@@ -488,7 +498,7 @@
     const name = route.name;
     const cat = catOf(name);
     const filled = S.dates.filter(d => ((S.data[d] || {})[name] || '').trim()).length;
-    const evs = S.events.filter(ev => eventOpen(ev) || ((S.signups[ev.id] || {})[name]));
+    const evs = S.events.filter(ev => ev.date >= S.today);
     setApp(
       h('button', { class: 'back', onclick: () => go({ v: 'cal' }) }, '‹ 回首頁'),
       h('div', { class: 'me-head', style: catVars(cat) }, h('small', null, cat), h('h2', null, name + '，你好')),
@@ -502,7 +512,7 @@
         const r = (S.signups[ev.id] || {})[name];
         const open = eventOpen(ev);
         const status = r && r.count ? h('div', { class: 's ok' }, `已報名 ${r.count} 人`)
-          : h('div', { class: 's warn' }, open ? '尚未報名' + (ev.deadline ? `・${parts(ev.deadline).short} 截止` : '') : '已截止');
+          : h('div', { class: 's warn' }, open ? '尚未報名' + (ev.deadline ? `・${parts(ev.deadline).short} 截止` : '') : statusOf(ev)[0]);
         return h('button', { class: 'row', onclick: () => go({ v: 'signup', name, id: ev.id }) },
           h('div', null, h('div', { class: 't' }, ev.name), h('div', { class: 's' }, eventWhen(ev)), status),
           h('span', { class: 'arrow' }, '›'));
