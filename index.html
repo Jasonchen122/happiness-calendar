@@ -3,410 +3,639 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>幸福季行事曆｜盈欣區小組</title>
+<meta name="theme-color" content="#1F4D3F">
+<meta name="apple-mobile-web-app-title" content="盈欣區小組">
+<title>盈欣區小組｜行事曆與活動報名</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F6F7F1;
+    --brand: #1F4D3F;
+    --brand-soft: #E6EFEA;
+    --bg: #F4F5F2;
     --paper: #FFFFFF;
-    --ink: #26312B;
-    --muted: #5F6B63;
-    --sage: #4F7A55;
-    --sage-soft: #E3ECDD;
-    --sun: #F5C451;
-    --sun-soft: #FFF3CF;
-    --line: #D9E0D2;
-    --alert: #B3412E;
+    --ink: #1E2A24;
+    --muted: #5E6A63;
+    --faint: #8C968F;
+    --line: #E1E5DF;
+    --danger: #B3412E;
+    --ok: #2F7D5B;
+    --warn: #A86A12;
     color-scheme: light;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
+    margin: 0; background: var(--bg); color: var(--ink);
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-    font-size: 18px;
-    line-height: 1.6;
-    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+    font-size: 17px; line-height: 1.6;
   }
-  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 120px; }
-  button { font: inherit; cursor: pointer; }
-  button:focus-visible, input:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid #F2C14E; outline-offset: 2px; }
+  [hidden] { display: none !important; }
 
-  header.top { padding: 8px 0 20px; }
-  header.top h1 { font-size: 30px; font-weight: 700; margin: 0; letter-spacing: 0.02em; }
-  header.top p { margin: 4px 0 0; color: var(--muted); font-size: 16px; }
+  .top { background: var(--brand); color: #fff; padding: calc(18px + env(safe-area-inset-top, 0px)) 0 0; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 16px; }
+  .top small { display: block; font-size: 13px; opacity: 0.8; letter-spacing: 0.08em; }
+  .top h1 { margin: 2px 0 14px; font-size: 26px; font-weight: 700; letter-spacing: 0.04em; }
+  .tabs { display: flex; gap: 4px; }
+  .tabs button { flex: 1; border: 0; background: transparent; color: rgba(255,255,255,0.75); padding: 10px 0 12px; font-size: 17px; border-bottom: 3px solid transparent; }
+  .tabs button[aria-selected="true"] { color: #fff; font-weight: 700; border-bottom-color: #F2C14E; }
 
-  .demo { background: var(--sun-soft); border: 1px solid var(--sun); border-radius: 12px; padding: 10px 14px; font-size: 15px; margin-bottom: 16px; }
+  main { padding: 18px 0 calc(110px + env(safe-area-inset-bottom, 0px)); }
+  .page-title { font-size: 22px; font-weight: 700; margin: 4px 0 4px; }
+  .sub { color: var(--muted); font-size: 15px; margin: 0 0 16px; }
+  .back { border: 0; background: none; color: var(--brand); font-size: 16px; padding: 4px 0 10px; font-weight: 500; }
+  .note { color: var(--faint); font-size: 14px; }
+  .error { background: #FBEAE6; color: var(--danger); border-radius: 10px; padding: 10px 14px; font-size: 15px; margin-bottom: 12px; }
+  .loading { text-align: center; color: var(--muted); padding: 48px 0; }
 
-  section.pick { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px 8px; margin-bottom: 24px; }
-  section.pick h2 { font-size: 20px; font-weight: 700; margin: 0 0 12px; }
-  .cat { margin-bottom: 12px; }
-  .cat-name { font-size: 15px; color: var(--muted); margin-bottom: 6px; }
-  .names { display: flex; flex-wrap: wrap; gap: 8px; }
-  .name-btn {
-    min-height: 48px; padding: 8px 18px; border-radius: 24px;
-    border: 1.5px solid var(--sage); background: var(--sage-soft); color: var(--ink);
-    font-size: 19px; font-weight: 500;
-  }
-  .name-btn:active { background: var(--sage); color: #fff; }
+  .seg { display: inline-flex; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 3px; margin-bottom: 14px; }
+  .seg button { border: 0; background: none; padding: 6px 14px; border-radius: 8px; font-size: 15px; color: var(--muted); }
+  .seg button[aria-pressed="true"] { background: var(--brand); color: #fff; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 
-  .bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-  .bar h2 { font-size: 22px; margin: 0; }
-  .toggle { display: flex; border: 1.5px solid var(--sage); border-radius: 10px; overflow: hidden; }
-  .toggle button { border: 0; background: var(--paper); padding: 6px 14px; font-size: 16px; color: var(--ink); min-height: 40px; }
-  .toggle button[aria-pressed="true"] { background: var(--sage); color: #fff; }
-  .updated { font-size: 14px; color: var(--muted); margin: -4px 0 12px; display: flex; gap: 10px; align-items: center; }
-  .link-btn { border: 0; background: none; color: var(--sage); text-decoration: underline; padding: 4px; font-size: 14px; }
+  .chip { display: inline-flex; align-items: center; font-size: 13px; font-weight: 500; padding: 1px 8px; border-radius: 6px; background: var(--c-bg); color: var(--c); white-space: nowrap; }
 
-  .day { display: flex; gap: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
-  .cal { flex: 0 0 64px; border-radius: 10px; overflow: hidden; text-align: center; border: 1px solid var(--line); align-self: flex-start; }
-  .cal .m { background: var(--sage); color: #fff; font-size: 14px; padding: 2px 0; }
-  .cal .d { background: var(--sun-soft); font-size: 30px; font-weight: 700; line-height: 1.25; padding: 4px 0 0; }
-  .cal .w { background: var(--sun-soft); font-size: 12px; color: var(--muted); padding-bottom: 4px; }
-  .acts { flex: 1; min-width: 0; }
-  .meeting { display: inline-block; font-size: 14px; background: var(--sun); color: var(--ink); border-radius: 6px; padding: 1px 8px; margin-bottom: 6px; }
-  .act { padding: 4px 0; border-bottom: 1px dashed var(--line); }
-  .act:last-child { border-bottom: 0; }
-  .act b { font-weight: 700; margin-right: 6px; }
-  .empty { color: var(--muted); font-size: 16px; padding-top: 4px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; }
+  .day { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 16px; margin-bottom: 10px; }
+  .day.past { opacity: 0.6; }
+  .date { text-align: center; }
+  .date .m { font-size: 13px; color: var(--muted); }
+  .date .d { font-size: 28px; font-weight: 700; line-height: 1.1; }
+  .date .w { font-size: 13px; color: var(--muted); }
+  .date .w.sat { color: var(--warn); }
+  .acts { min-width: 0; }
+  .act { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 8px; padding: 5px 0; border-left: 4px solid var(--c); padding-left: 10px; margin-bottom: 6px; border-radius: 0; }
+  .act b { font-weight: 500; color: var(--c); font-size: 15px; }
+  .empty { color: var(--faint); font-size: 15px; padding-top: 4px; }
+  .meeting { display: inline-block; font-size: 13px; background: #FFF3CF; color: #7A5300; border-radius: 6px; padding: 1px 8px; margin-bottom: 6px; }
+  .evt-banner { width: 100%; text-align: left; border: 0; background: var(--brand-soft); color: var(--brand); border-radius: 10px; padding: 8px 12px; margin-bottom: 8px; display: block; }
+  .evt-banner strong { display: block; font-size: 16px; }
+  .evt-banner span { font-size: 14px; }
 
-  .table-wrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; }
-  table { border-collapse: collapse; font-size: 15px; white-space: nowrap; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; font-size: 15px; white-space: nowrap; background: var(--paper); }
   th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
-  thead th { background: var(--sage-soft); font-weight: 700; }
-  thead tr:first-child th { font-size: 13px; color: var(--muted); font-weight: 500; }
-  .sticky { position: sticky; left: 0; background: var(--sun-soft); z-index: 1; font-weight: 700; }
-  thead .sticky { background: var(--sage-soft); }
-  td.blank { background: #FAFBF8; }
+  thead th { font-weight: 700; }
+  .cat-head { background: var(--c-bg); color: var(--c); font-size: 13px; }
+  .sticky { position: sticky; left: 0; background: var(--paper); z-index: 1; font-weight: 700; }
 
-  .edit-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .back { border: 1.5px solid var(--line); background: var(--paper); border-radius: 10px; padding: 6px 14px; min-height: 44px; font-size: 17px; }
-  .edit-head h2 { font-size: 24px; margin: 0; }
-  .hint { color: var(--muted); font-size: 16px; margin: 0 0 16px; }
-  .field { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; gap: 14px; }
-  .field .cal { flex-basis: 56px; }
-  .field .cal .d { font-size: 24px; }
-  .field-body { flex: 1; min-width: 0; }
-  .field input {
-    width: 100%; font: inherit; font-size: 19px; padding: 12px; min-height: 52px;
+  .event { display: block; width: 100%; text-align: left; padding: 16px; margin-bottom: 12px; border: 1px solid var(--line); }
+  .event h3 { margin: 0 0 2px; font-size: 19px; }
+  .meta { color: var(--muted); font-size: 15px; }
+  .status { display: inline-block; font-size: 13px; font-weight: 500; border-radius: 6px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
+  .status.open { background: #E2F1E9; color: var(--ok); }
+  .status.closed { background: #EEEEEA; color: var(--muted); }
+  .bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin: 12px 0 6px; }
+  .bar i { display: block; height: 100%; background: var(--brand); border-radius: 4px; }
+  .stat-line { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+  .stat-line b { color: var(--ink); }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .stat small { display: block; color: var(--muted); font-size: 14px; }
+  .stat strong { font-size: 28px; }
+  .dash { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin: 16px 0; }
+  .dash-title { font-size: 15px; font-weight: 700; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; }
+  .dash .stats { margin: 0 0 12px; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .dash .stat { padding: 10px; background: var(--bg); border: 0; }
+  .dash .stat strong { font-size: 24px; }
+  .stat.alert strong { color: var(--danger); }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .tile { border-radius: 10px; padding: 8px 10px; border-left: 4px solid var(--c); background: var(--c-bg); min-width: 0; }
+  .tile b { display: block; font-weight: 500; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tile span { font-size: 14px; font-weight: 700; color: var(--c); }
+  .tile.no { background: var(--paper); border: 1.5px dashed #C9CFC8; border-left: 4px solid #C9CFC8; }
+  .tile.no span { color: var(--danger); font-weight: 500; }
+  .missing { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 15px; }
+  .missing b { color: var(--danger); font-weight: 700; }
+  .section-head { font-size: 15px; font-weight: 700; margin: 20px 0 10px; }
+  .info-box { white-space: pre-wrap; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 16px; margin-top: 12px; }
+
+  .group { margin-bottom: 14px; overflow: hidden; }
+  .group-head { display: flex; justify-content: space-between; align-items: center; background: var(--c-bg); color: var(--c); padding: 10px 14px; font-weight: 700; }
+  .group-head span { font-weight: 500; font-size: 14px; }
+  .leader { padding: 10px 14px; border-top: 1px solid var(--line); }
+  .leader-top { display: flex; justify-content: space-between; gap: 8px; }
+  .leader-top b { font-weight: 500; }
+  .count { font-weight: 700; color: var(--c); white-space: nowrap; }
+  .names { font-size: 15px; color: var(--ink); margin-top: 2px; word-break: break-all; }
+  .pending { color: var(--faint); font-size: 15px; }
+
+  .pick-group { margin-bottom: 18px; }
+  .pick-label { display: inline-block; background: var(--c); color: #fff; font-size: 14px; font-weight: 500; border-radius: 6px; padding: 2px 10px; margin-bottom: 8px; }
+  .pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pick-grid button { min-height: 56px; border: 1.5px solid var(--c); background: var(--c-bg); color: var(--ink); border-radius: 12px; font-size: 19px; font-weight: 500; }
+  .pick-grid button:active { background: var(--c); color: #fff; }
+
+  .me-head { background: var(--c); color: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+  .me-head small { opacity: 0.85; font-size: 14px; }
+  .me-head h2 { margin: 2px 0 0; font-size: 24px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 16px; border: 0; border-top: 1px solid var(--line); background: var(--paper); }
+  .row:first-child { border-top: 0; }
+  .row .t { font-size: 18px; font-weight: 500; }
+  .row .s { font-size: 14px; color: var(--muted); }
+  .row .s.ok { color: var(--ok); }
+  .row .s.warn { color: var(--warn); }
+  .arrow { color: var(--faint); font-size: 22px; }
+  .section-label { font-size: 14px; color: var(--muted); margin: 18px 0 8px; font-weight: 500; }
+  .list { overflow: hidden; }
+
+  .field { padding: 14px; margin-bottom: 10px; display: grid; grid-template-columns: 52px 1fr; gap: 12px; }
+  .field .date .d { font-size: 22px; }
+  label.lbl { display: block; font-size: 15px; color: var(--muted); margin: 14px 0 6px; font-weight: 500; }
+  input[type=text], input[type=date], input[type=password], textarea, select {
+    width: 100%; font: inherit; font-size: 18px; padding: 12px; min-height: 52px;
     border: 1.5px solid var(--line); border-radius: 10px; background: #FCFDFB; color: var(--ink);
   }
-  .field input:focus { border-color: var(--sage); background: #fff; }
+  textarea { min-height: 120px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { border-color: var(--brand); background: #fff; outline: none; }
   .others { font-size: 14px; color: var(--muted); margin-top: 6px; }
-  .clear { border: 0; background: none; color: var(--alert); font-size: 15px; padding: 6px 0 0; text-decoration: underline; }
+  .preview { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .preview span { background: var(--brand-soft); color: var(--brand); border-radius: 6px; padding: 2px 10px; font-size: 15px; }
+  .counter { font-size: 15px; color: var(--ok); font-weight: 500; margin-top: 8px; }
+  .text-btn { border: 0; background: none; color: var(--danger); font-size: 15px; padding: 8px 0; text-decoration: underline; }
 
-  .save-bar {
-    position: fixed; left: 0; right: 0; bottom: 0; background: var(--paper);
+  .dock {
+    position: fixed; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.96);
     border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-    display: flex; gap: 10px; justify-content: center;
   }
-  .save-bar button { min-height: 54px; border-radius: 12px; font-size: 20px; font-weight: 700; }
-  .save-bar .cancel { flex: 0 0 110px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); }
-  .save-bar .save { flex: 1; max-width: 420px; border: 0; background: var(--sage); color: #fff; }
-  .save-bar .save[disabled] { opacity: 0.6; }
-  .error { color: var(--alert); font-size: 16px; margin: 0 0 12px; }
+  .dock .inner { max-width: 680px; margin: 0 auto; display: flex; gap: 10px; }
+  .btn { min-height: 54px; border-radius: 12px; font-size: 19px; font-weight: 700; border: 0; padding: 0 18px; }
+  .btn.primary { flex: 1; background: var(--brand); color: #fff; }
+  .btn.ghost { background: var(--paper); border: 1.5px solid var(--line); }
+  .btn[disabled] { opacity: 0.6; }
+
+  .admin-link { display: block; margin: 28px auto 0; border: 0; background: none; color: var(--faint); font-size: 14px; text-decoration: underline; }
+  .admin-item { padding: 14px 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+  .admin-item:first-child { border-top: 0; }
+  .mini { border: 1.5px solid var(--line); background: var(--paper); border-radius: 8px; padding: 6px 12px; font-size: 15px; min-height: 40px; }
+  .mini.danger { color: var(--danger); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   .toast {
-    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
-    background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 18px;
+    position: fixed; left: 50%; top: calc(16px + env(safe-area-inset-top, 0px)); transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 17px; z-index: 20;
     opacity: 0; pointer-events: none; transition: opacity 0.25s;
   }
   .toast.show { opacity: 1; }
-  .loading { text-align: center; color: var(--muted); padding: 40px 0; }
-  [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 </style>
 </head>
 <body>
-<main>
-  <header class="top">
-    <h1>幸福季行事曆</h1>
-    <p>盈欣區小組｜11 月到 12 月的主日活動</p>
-  </header>
-
-  <div id="demo" class="demo" hidden>目前是示範模式：資料還沒有連到試算表，填寫的內容不會保存。</div>
-
-  <!-- 首頁 -->
-  <div id="home">
-    <section class="pick">
-      <h2>點你的名字，填寫或修改活動</h2>
-      <div id="pickList"></div>
-    </section>
-
-    <div class="bar">
-      <h2>全部小組的活動</h2>
-      <div class="toggle" role="group" aria-label="切換顯示方式">
-        <button id="btnCards" aria-pressed="true">依日期</button>
-        <button id="btnTable" aria-pressed="false">表格</button>
-      </div>
+<header class="top">
+  <div class="wrap">
+    <small>行事曆・活動報名</small>
+    <h1>盈欣區小組</h1>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tabCal" aria-selected="true">行事曆</button>
+      <button role="tab" id="tabEvt" aria-selected="false">活動報名</button>
     </div>
-    <div class="updated"><span id="updatedAt"></span><button class="link-btn" id="btnRefresh">重新整理</button></div>
-
-    <div id="loading" class="loading">正在載入行事曆…</div>
-    <p id="loadError" class="error" hidden></p>
-    <div id="cards"></div>
-    <div id="tableView" hidden></div>
   </div>
+</header>
 
-  <!-- 填寫頁 -->
-  <div id="edit" hidden>
-    <div class="edit-head">
-      <button class="back" id="btnBack">← 回行事曆</button>
-    </div>
-    <h2 id="editTitle" style="font-size:24px;margin:8px 0 4px"></h2>
-    <p class="hint">每個日期填一個活動，沒有活動就空著。要刪除，清掉文字後按「儲存」。</p>
-    <p id="saveError" class="error" hidden></p>
-    <div id="fields"></div>
-  </div>
-</main>
+<main class="wrap" id="app"><div class="loading">正在載入…</div></main>
 
-<div class="save-bar" id="saveBar" hidden>
-  <button class="cancel" id="btnCancel">取消</button>
-  <button class="save" id="btnSave">儲存</button>
-</div>
+<div class="dock" id="dock" hidden><div class="inner" id="dockInner"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-  // ▼▼▼ 部署 Apps Script 後，把網址貼在下面的引號中間 ▼▼▼
   const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
-  // ▲▲▲
+  const START_YEAR = 2026;
 
-  const DEMO = {
-    ok: true,
-    dates: ['11月1日','11月8日','11月15日','11月22日','11月29日','12月6日','12月13日','12月20日','12月27日'],
-    groups: [
-      { category: '壯世代', names: ['玉娟','穎霞'] },
-      { category: '中青組', names: ['郁珊','月娥','彥均','茗莉','敬勳','珊羽','奉建'] },
-      { category: '媽媽組', names: ['依寧','若慈'] },
-      { category: '親子組', names: ['Joanna'] },
-      { category: '社青組', names: ['Apple','芬芬'] }
-    ],
-    data: {
-      '11月1日': { '郁珊': '山林慢遊福音活動', 'Apple': '桌遊福音活動' },
-      '11月8日': { '茗莉': '情緖覺察桌遊活動', '珊羽': '精油活動' },
-      '11月15日': { '玉娟': '卡啦OK福音活動', '茗莉': '劍潭山漫遊' },
-      '11月22日': { '茗莉': '投票日休息', '珊羽': '趣味桌遊' }
-    },
-    meetings: { '11月8日': '小組長會議' }
+  const COLORS = {
+    '壯世代': ['#A8661A', '#FBF0DE'],
+    '中青組': ['#2F7D5B', '#E2F1E9'],
+    '媽媽組': ['#B04A66', '#F9E5EB'],
+    '親子組': ['#2B6CB0', '#E2EDF8'],
+    '社青組': ['#6A52AD', '#ECE7F8']
   };
+  const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
-  let state = null;
-  let view = 'cards';
-  let editing = null;
+  let S = null;
+  let route = { v: 'cal' };
+  let calMode = 'list';
+  let adminPw = '';
 
-  const $ = id => document.getElementById(id);
-  const el = (tag, cls, text) => {
+  const app = document.getElementById('app');
+  const setApp = (...kids) => app.replaceChildren(...kids.flat(Infinity).filter(k => k != null && k !== false));
+
+  function h(tag, attrs, ...kids) {
     const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
+    if (attrs) for (const k in attrs) {
+      const v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v;
+      else if (k === 'style') n.setAttribute('style', v);
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+      else if (k === 'text') n.textContent = v;
+      else n.setAttribute(k, v === true ? '' : v);
+    }
+    kids.flat(Infinity).forEach(c => { if (c != null && c !== false) n.append(c instanceof Node ? c : String(c)); });
     return n;
-  };
-
-  function splitDate(date) {
-    const m = date.match(/(\d+)月(\d+)日/);
-    return m ? { m: m[1] + '月', d: m[2] } : { m: '', d: date };
   }
-  function calBlock(date) {
-    const p = splitDate(date);
-    const box = el('div', 'cal');
-    box.append(el('div', 'm', p.m), el('div', 'd', p.d), el('div', 'w', '主日'));
-    return box;
-  }
-  function allNames() { return state.groups.flatMap(g => g.names); }
-  function act(date, name) { return ((state.data[date] || {})[name] || '').trim(); }
+  const catVars = cat => { const c = COLORS[cat] || ['#5E6A63', '#EEEEEA']; return `--c:${c[0]};--c-bg:${c[1]}`; };
+  const groups = () => S.groups;
+  const leaders = () => S.groups.flatMap(g => g.names);
+  const catOf = name => (S.groups.find(g => g.names.includes(name)) || {}).category;
 
-  async function load() {
-    $('loading').hidden = false;
-    $('loadError').hidden = true;
-    try {
-      if (!API_URL) {
-        $('demo').hidden = false;
-        state = state || JSON.parse(JSON.stringify(DEMO));
-      } else {
-        const res = await fetch(API_URL, { cache: 'no-store' });
-        const json = await res.json();
-        if (!json.ok) throw new Error(json.error || '讀取失敗');
-        state = json;
-      }
-      $('updatedAt').textContent = '更新時間 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
-      renderHome();
-    } catch (e) {
-      $('loadError').textContent = '行事曆載入失敗，請檢查網路後按「重新整理」。';
-      $('loadError').hidden = false;
-    } finally {
-      $('loading').hidden = true;
-    }
+  function weeklyToISO(label) {
+    const m = label.match(/(\d+)月(\d+)日/);
+    if (!m) return '';
+    const mon = +m[1], day = +m[2];
+    const y = mon >= 8 ? START_YEAR : START_YEAR + 1;
+    return `${y}-${String(mon).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+  function parts(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    const wd = new Date(y, m - 1, d).getDay();
+    return { m: m + '月', d: String(d), w: '週' + WEEK[wd], wd: wd, short: `${m}/${d}` };
+  }
+  function eventWhen(ev) {
+    const p = parts(ev.date);
+    return `${p.short}（${p.w.slice(1)}）${ev.time ? ' ' + ev.time : ''}`;
+  }
+  function eventOpen(ev) { return ev.status !== '關閉' && !(ev.deadline && S.today > ev.deadline); }
+  function signupStats(ev) {
+    const s = S.signups[ev.id] || {};
+    const names = Object.keys(s).filter(n => s[n].count > 0);
+    return { groups: names.length, people: names.reduce((t, n) => t + s[n].count, 0) };
+  }
+  function splitNames(text) {
+    const seen = {};
+    return text.split(/[、,，;；\n\r]+/).map(s => s.trim()).filter(s => s && !seen[s] && (seen[s] = true));
   }
 
-  function renderHome() {
-    const pick = $('pickList');
-    pick.replaceChildren();
-    state.groups.forEach(g => {
-      const wrap = el('div', 'cat');
-      wrap.append(el('div', 'cat-name', g.category));
-      const names = el('div', 'names');
-      g.names.forEach(name => {
-        const b = el('button', 'name-btn', name);
-        b.addEventListener('click', () => openEdit(name));
-        names.append(b);
-      });
-      wrap.append(names);
-      pick.append(wrap);
-    });
-    renderCards();
-    renderTable();
-    setView(view);
+  async function api(body) {
+    const res = body
+      ? await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) })
+      : await fetch(API_URL, { cache: 'no-store' });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || '發生錯誤');
+    S = json;
+    return json;
   }
 
-  function renderCards() {
-    const box = $('cards');
-    box.replaceChildren();
-    state.dates.forEach(date => {
-      const card = el('article', 'day');
-      card.append(calBlock(date));
-      const acts = el('div', 'acts');
-      const meeting = (state.meetings || {})[date];
-      if (meeting) acts.append(el('span', 'meeting', meeting));
-      let count = 0;
-      state.groups.forEach(g => g.names.forEach(name => {
-        const a = act(date, name);
-        if (!a) return;
-        count++;
-        const row = el('div', 'act');
-        row.append(el('b', null, name), document.createTextNode(a));
-        acts.append(row);
-      }));
-      if (!count) acts.append(el('div', 'empty', '還沒有活動'));
-      card.append(acts);
-      box.append(card);
-    });
-  }
-
-  function renderTable() {
-    const table = el('table');
-    const thead = el('thead');
-    const r1 = el('tr');
-    r1.append(el('th', 'sticky', ''));
-    state.groups.forEach(g => { const th = el('th', null, g.category); th.colSpan = g.names.length; r1.append(th); });
-    const r2 = el('tr');
-    r2.append(el('th', 'sticky', '日期'));
-    allNames().forEach(n => r2.append(el('th', null, n)));
-    thead.append(r1, r2);
-    const tbody = el('tbody');
-    state.dates.forEach(date => {
-      const tr = el('tr');
-      tr.append(el('td', 'sticky', date));
-      allNames().forEach(n => {
-        const a = act(date, n);
-        tr.append(el('td', a ? null : 'blank', a));
-      });
-      tbody.append(tr);
-    });
-    table.append(thead, tbody);
-    const wrap = el('div', 'table-wrap');
-    wrap.append(table);
-    $('tableView').replaceChildren(wrap);
-  }
-
-  function setView(v) {
-    view = v;
-    $('cards').hidden = v !== 'cards';
-    $('tableView').hidden = v !== 'table';
-    $('btnCards').setAttribute('aria-pressed', v === 'cards');
-    $('btnTable').setAttribute('aria-pressed', v === 'table');
-  }
-
-  function openEdit(name) {
-    editing = name;
-    $('editTitle').textContent = name + ' 的活動';
-    $('saveError').hidden = true;
-    const box = $('fields');
-    box.replaceChildren();
-    state.dates.forEach(date => {
-      const f = el('div', 'field');
-      f.append(calBlock(date));
-      const body = el('div', 'field-body');
-      const input = el('input');
-      input.type = 'text';
-      input.maxLength = 40;
-      input.placeholder = '例：桌遊福音活動';
-      input.value = act(date, name);
-      input.dataset.date = date;
-      input.setAttribute('aria-label', date + ' 的活動');
-      body.append(input);
-      const clear = el('button', 'clear', '清除這天');
-      clear.type = 'button';
-      clear.addEventListener('click', () => { input.value = ''; input.focus(); });
-      body.append(clear);
-      const others = allNames().filter(n => n !== name && act(date, n)).map(n => n + '：' + act(date, n));
-      if (others.length) body.append(el('div', 'others', '這天其他小組｜' + others.join('、')));
-      f.append(body);
-      box.append(f);
-    });
-    $('home').hidden = true;
-    $('edit').hidden = false;
-    $('saveBar').hidden = false;
-    window.scrollTo(0, 0);
-  }
-
-  function closeEdit() {
-    editing = null;
-    $('edit').hidden = true;
-    $('saveBar').hidden = true;
-    $('home').hidden = false;
-    window.scrollTo(0, 0);
-  }
-
-  async function save() {
-    const btn = $('btnSave');
-    const entries = {};
-    document.querySelectorAll('#fields input').forEach(i => { entries[i.dataset.date] = i.value.trim(); });
-    btn.disabled = true;
-    btn.textContent = '儲存中…';
-    $('saveError').hidden = true;
-    try {
-      if (!API_URL) {
-        Object.keys(entries).forEach(d => { state.data[d] = state.data[d] || {}; state.data[d][editing] = entries[d]; });
-      } else {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ name: editing, entries }) });
-        const json = await res.json();
-        if (!json.ok) throw new Error(json.error || '儲存失敗');
-        state = json;
-      }
-      renderHome();
-      closeEdit();
-      toast('已儲存，謝謝！');
-    } catch (e) {
-      $('saveError').textContent = '儲存沒有成功，請檢查網路後再按一次「儲存」。';
-      $('saveError').hidden = false;
-      window.scrollTo(0, 0);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '儲存';
-    }
-  }
-
-  let toastTimer;
   function toast(msg) {
-    const t = $('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400);
   }
 
-  $('btnCards').addEventListener('click', () => setView('cards'));
-  $('btnTable').addEventListener('click', () => setView('table'));
-  $('btnRefresh').addEventListener('click', load);
-  $('btnBack').addEventListener('click', closeEdit);
-  $('btnCancel').addEventListener('click', closeEdit);
-  $('btnSave').addEventListener('click', save);
+  function go(r, replace) {
+    route = r;
+    if (replace) history.replaceState(r, ''); else history.pushState(r, '');
+    render();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('popstate', e => { route = e.state || { v: 'cal' }; render(); });
 
-  load();
+  function dock(...buttons) {
+    const d = document.getElementById('dock');
+    const inner = document.getElementById('dockInner');
+    inner.replaceChildren(...buttons);
+    d.hidden = !buttons.length;
+  }
+
+  function setTabs() {
+    const evt = ['evts', 'event'].includes(route.v);
+    const cal = route.v === 'cal';
+    document.getElementById('tabCal').setAttribute('aria-selected', cal);
+    document.getElementById('tabEvt').setAttribute('aria-selected', evt);
+  }
+
+  function render() {
+    setTabs();
+    if (!S) return;
+    const views = { cal: viewCal, evts: viewEvents, event: viewEvent, pick: viewPick, me: viewMe,
+                    weekly: viewWeekly, signup: viewSignup, login: viewLogin, admin: viewAdmin, edit: viewEdit };
+    (views[route.v] || viewCal)();
+  }
+
+  const fillBtn = () => h('button', { class: 'btn primary', onclick: () => go({ v: 'pick' }) }, '我是小組長，我要填寫');
+
+  /* ---------- 行事曆 ---------- */
+  function viewCal() {
+    const legend = h('div', { class: 'legend' }, groups().map(g => h('span', { class: 'chip', style: catVars(g.category) }, g.category)));
+    const seg = h('div', { class: 'seg', role: 'group', 'aria-label': '顯示方式' },
+      h('button', { 'aria-pressed': calMode === 'list', onclick: () => { calMode = 'list'; render(); } }, '依日期'),
+      h('button', { 'aria-pressed': calMode === 'table', onclick: () => { calMode = 'table'; render(); } }, '總表'));
+    setApp(seg, legend, calMode === 'list' ? calList() : calTable());
+    dock(fillBtn());
+  }
+
+  function calList() {
+    return h('div', null, S.dates.map(label => {
+      const iso = weeklyToISO(label);
+      const p = parts(iso);
+      const acts = h('div', { class: 'acts' });
+      const meeting = (S.meetings || {})[label];
+      if (meeting) acts.append(h('span', { class: 'meeting' }, meeting));
+      let n = 0;
+      groups().forEach(g => g.names.forEach(name => {
+        const a = ((S.data[label] || {})[name] || '').trim();
+        if (!a) return;
+        n++;
+        acts.append(h('div', { class: 'act', style: catVars(g.category) }, h('b', null, name), h('span', null, a)));
+      }));
+      if (!n) acts.append(h('div', { class: 'empty' }, '還沒有小組活動'));
+      return h('div', { class: 'card day' + (iso < S.today ? ' past' : '') },
+        h('div', { class: 'date' }, h('div', { class: 'm' }, p.m), h('div', { class: 'd' }, p.d), h('div', { class: 'w' }, p.w)),
+        acts);
+    }));
+  }
+
+  function calTable() {
+    const r1 = h('tr', null, h('th', { class: 'sticky' }, ''), groups().map(g => h('th', { class: 'cat-head', colspan: g.names.length, style: catVars(g.category) }, g.category)));
+    const r2 = h('tr', null, h('th', { class: 'sticky' }, '日期'), leaders().map(n => h('th', null, n)));
+    const body = h('tbody', null, S.dates.map(label => h('tr', null,
+      h('td', { class: 'sticky' }, label),
+      leaders().map(n => h('td', null, ((S.data[label] || {})[n] || ''))))));
+    return h('div', { class: 'card table-wrap' }, h('table', null, h('thead', null, r1, r2), body));
+  }
+
+  /* ---------- 活動列表與詳情 ---------- */
+  function viewEvents() {
+    const list = S.events.filter(ev => ev.date >= S.today || eventOpen(ev));
+    const past = S.events.filter(ev => !list.includes(ev));
+    const card = ev => {
+      const st = signupStats(ev);
+      const open = eventOpen(ev);
+      return h('button', { class: 'card event', onclick: () => go({ v: 'event', id: ev.id }) },
+        h('h3', null, ev.name, h('span', { class: 'status ' + (open ? 'open' : 'closed') }, open ? '報名中' : '已截止')),
+        h('div', { class: 'meta' }, eventWhen(ev) + (ev.place ? '｜' + ev.place : '')),
+        ev.deadline ? h('div', { class: 'meta' }, '報名截止 ' + parts(ev.deadline).short) : null,
+        h('div', { class: 'bar' }, h('i', { style: `width:${Math.round(st.groups / leaders().length * 100)}%` })),
+        h('div', { class: 'stat-line' }, h('span', null, '已報名 ', h('b', null, `${st.groups} / ${leaders().length}`), ' 組・未報名 ', h('b', { style: 'color:var(--danger)' }, leaders().length - st.groups), ' 組'), h('span', null, '共 ', h('b', null, st.people), ' 人')));
+    };
+    setApp(
+      h('div', { class: 'page-title' }, '活動報名'),
+      h('p', { class: 'sub' }, '點活動可以看到各小組的報名名單'),
+      list.length ? list.map(card) : h('div', { class: 'card', style: 'padding:24px;text-align:center;color:var(--muted)' }, '目前沒有開放報名的活動'),
+      past.length ? [h('div', { class: 'section-label' }, '已結束的活動'), past.map(card)] : null,
+      h('button', { class: 'admin-link', onclick: () => go(adminPw ? { v: 'admin' } : { v: 'login' }) }, '管理者入口'));
+    dock(fillBtn());
+  }
+
+  function viewEvent() {
+    const ev = S.events.find(e => e.id === route.id);
+    if (!ev) return go({ v: 'evts' }, true);
+    const st = signupStats(ev);
+    const s = S.signups[ev.id] || {};
+    const open = eventOpen(ev);
+    const missing = leaders().filter(n => !(s[n] && s[n].count));
+    const copyBtn = missing.length ? h('button', { class: 'mini', onclick: async () => {
+      const text = `【${ev.name}】尚未報名的小組：${missing.join('、')}` + (ev.deadline ? `，報名截止 ${parts(ev.deadline).short}` : '');
+      try { await navigator.clipboard.writeText(text); toast('已複製，可以貼到 LINE'); }
+      catch (e) { prompt('請複製下面的文字', text); }
+    } }, '複製提醒文字') : null;
+    setApp(
+      h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
+      h('div', { class: 'page-title' }, ev.name, h('span', { class: 'status ' + (open ? 'open' : 'closed') }, open ? '報名中' : '已截止')),
+      h('div', { class: 'meta' }, eventWhen(ev) + (ev.place ? '｜' + ev.place : '')),
+      ev.deadline ? h('div', { class: 'meta' }, '報名截止 ' + parts(ev.deadline).short) : null,
+      h('div', { class: 'dash' },
+        h('div', { class: 'dash-title' }, '報名狀況'),
+        h('div', { class: 'stats' },
+          h('div', { class: 'stat' }, h('small', null, '報名人數'), h('strong', null, st.people)),
+          h('div', { class: 'stat' }, h('small', null, '已報名'), h('strong', null, st.groups), h('small', { style: 'display:inline' }, ` / ${leaders().length} 組`)),
+          h('div', { class: 'stat' + (missing.length ? ' alert' : '') }, h('small', null, '未報名'), h('strong', null, missing.length), h('small', { style: 'display:inline' }, ' 組'))),
+        h('div', { class: 'tiles' }, groups().map(g => g.names.map(n => {
+          const r = s[n];
+          const ok = r && r.count;
+          return h('div', { class: 'tile' + (ok ? '' : ' no'), style: catVars(g.category) },
+            h('b', null, n), h('span', null, ok ? r.count + ' 人' : '未報名'));
+        }))),
+        missing.length
+          ? h('div', { class: 'missing' }, h('div', null, h('b', null, `尚未報名（${missing.length} 組）`), '：' + missing.join('、')), h('div', { style: 'margin-top:8px' }, copyBtn))
+          : h('div', { class: 'missing', style: 'color:var(--ok);font-weight:700' }, '所有小組都已報名')),
+      ev.info ? h('div', { class: 'info-box' }, ev.info) : null,
+      h('div', { class: 'section-head' }, '各小組報名名單'),
+      groups().map(g => {
+        const sub = g.names.reduce((t, n) => t + ((s[n] || {}).count || 0), 0);
+        return h('div', { class: 'card group', style: catVars(g.category) },
+          h('div', { class: 'group-head' }, g.category, h('span', null, `${sub} 人`)),
+          g.names.map(n => {
+            const r = s[n];
+            return h('div', { class: 'leader' },
+              h('div', { class: 'leader-top' }, h('b', null, n), r && r.count ? h('span', { class: 'count' }, r.count + ' 人') : h('span', { class: 'pending' }, '尚未報名')),
+              r && r.count ? h('div', { class: 'names' }, r.names.join('、')) : null,
+              r && r.note ? h('div', { class: 'note' }, '備註：' + r.note) : null);
+          }));
+      }));
+    dock(open ? h('button', { class: 'btn primary', onclick: () => go({ v: 'pick', next: ev.id }) }, '幫我的小組報名') : fillBtn());
+  }
+
+  /* ---------- 小組長 ---------- */
+  function viewPick() {
+    setApp(
+      h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
+      h('div', { class: 'page-title' }, '你是哪一位小組長？'),
+      h('p', { class: 'sub' }, '點自己的名字'),
+      groups().map(g => h('div', { class: 'pick-group', style: catVars(g.category) },
+        h('span', { class: 'pick-label' }, g.category),
+        h('div', { class: 'pick-grid' }, g.names.map(n => h('button', {
+          onclick: () => go(route.next ? { v: 'signup', name: n, id: route.next } : { v: 'me', name: n }, true)
+        }, n))))));
+    dock();
+  }
+
+  function viewMe() {
+    const name = route.name;
+    const cat = catOf(name);
+    const filled = S.dates.filter(d => ((S.data[d] || {})[name] || '').trim()).length;
+    const evs = S.events.filter(ev => eventOpen(ev) || ((S.signups[ev.id] || {})[name]));
+    setApp(
+      h('button', { class: 'back', onclick: () => go({ v: 'cal' }) }, '‹ 回首頁'),
+      h('div', { class: 'me-head', style: catVars(cat) }, h('small', null, cat), h('h2', null, name + '，你好')),
+      h('div', { class: 'section-label' }, '每週小組活動'),
+      h('div', { class: 'card list' },
+        h('button', { class: 'row', onclick: () => go({ v: 'weekly', name }) },
+          h('div', null, h('div', { class: 't' }, '填寫小組活動'), h('div', { class: 's' }, `已填 ${filled} / ${S.dates.length} 週`)),
+          h('span', { class: 'arrow' }, '›'))),
+      h('div', { class: 'section-label' }, '活動報名'),
+      evs.length ? h('div', { class: 'card list' }, evs.map(ev => {
+        const r = (S.signups[ev.id] || {})[name];
+        const open = eventOpen(ev);
+        const status = r && r.count ? h('div', { class: 's ok' }, `已報名 ${r.count} 人`)
+          : h('div', { class: 's warn' }, open ? '尚未報名' + (ev.deadline ? `・${parts(ev.deadline).short} 截止` : '') : '已截止');
+        return h('button', { class: 'row', onclick: () => go({ v: 'signup', name, id: ev.id }) },
+          h('div', null, h('div', { class: 't' }, ev.name), h('div', { class: 's' }, eventWhen(ev)), status),
+          h('span', { class: 'arrow' }, '›'));
+      })) : h('div', { class: 'card', style: 'padding:18px;color:var(--muted)' }, '目前沒有開放報名的活動'),
+      h('p', { class: 'note', style: 'text-align:center;margin-top:20px' }, '不是 ' + name + '？', h('button', { class: 'back', style: 'padding:0', onclick: () => go({ v: 'pick' }, true) }, '換一位')));
+    dock();
+  }
+
+  function viewWeekly() {
+    const name = route.name;
+    const inputs = [];
+    const err = h('div', { class: 'error', hidden: true });
+    setApp(
+      h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
+      h('div', { class: 'page-title' }, name + ' 的小組活動'),
+      h('p', { class: 'sub' }, '每個日期填一個活動，沒有活動就空著。要刪除，清掉文字後儲存。'),
+      err,
+      S.dates.map(label => {
+        const p = parts(weeklyToISO(label));
+        const input = h('input', { type: 'text', maxlength: 40, placeholder: '例：桌遊福音活動', 'aria-label': label + ' 的活動' });
+        input.value = ((S.data[label] || {})[name] || '');
+        input.dataset.date = label;
+        inputs.push(input);
+        const others = leaders().filter(n => n !== name && ((S.data[label] || {})[n] || '').trim()).map(n => n + '：' + S.data[label][n]);
+        return h('div', { class: 'card field' },
+          h('div', { class: 'date' }, h('div', { class: 'm' }, p.m), h('div', { class: 'd' }, p.d), h('div', { class: 'w' }, p.w)),
+          h('div', null, input, others.length ? h('div', { class: 'others' }, '這天其他小組｜' + others.join('、')) : null));
+      }));
+    const save = h('button', { class: 'btn primary' }, '儲存');
+    save.addEventListener('click', async () => {
+      const entries = {};
+      inputs.forEach(i => entries[i.dataset.date] = i.value.trim());
+      await submit(save, err, { action: 'saveWeekly', name, entries }, () => { go({ v: 'me', name }, true); toast('已儲存，謝謝！'); });
+    });
+    dock(h('button', { class: 'btn ghost', onclick: () => history.back() }, '取消'), save);
+  }
+
+  function viewSignup() {
+    const name = route.name;
+    const ev = S.events.find(e => e.id === route.id);
+    if (!ev) return go({ v: 'me', name }, true);
+    const r = (S.signups[ev.id] || {})[name] || { names: [], note: '' };
+    const open = eventOpen(ev);
+    const err = h('div', { class: 'error', hidden: true });
+    const box = h('textarea', { id: 'names', placeholder: '王小明、陳美玲、林大華', disabled: !open });
+    box.value = r.names.join('、');
+    const note = h('input', { type: 'text', id: 'note', maxlength: 100, placeholder: '素食 1 位、需要接送', disabled: !open });
+    note.value = r.note || '';
+    const preview = h('div', { class: 'preview' });
+    const counter = h('div', { class: 'counter' });
+    const refresh = () => {
+      const list = splitNames(box.value);
+      preview.replaceChildren(...list.map(n => h('span', null, n)));
+      counter.textContent = list.length ? `共 ${list.length} 人` : '';
+    };
+    box.addEventListener('input', refresh);
+    refresh();
+    setApp(
+      h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
+      h('div', { class: 'me-head', style: catVars(catOf(name)) }, h('small', null, `${catOf(name)}｜${name}`), h('h2', null, ev.name)),
+      h('div', { class: 'meta' }, eventWhen(ev) + (ev.place ? '｜' + ev.place : '')),
+      ev.deadline ? h('div', { class: 'meta' }, '報名截止 ' + parts(ev.deadline).short) : null,
+      ev.info ? h('div', { class: 'info-box' }, ev.info) : null,
+      !open ? h('div', { class: 'error', style: 'margin-top:14px' }, '這個活動已截止報名，名單無法修改。') : null,
+      err,
+      h('label', { class: 'lbl', for: 'names' }, '參加的組員（用頓號隔開，或一行一位）'),
+      box, counter, preview,
+      h('label', { class: 'lbl', for: 'note' }, '備註（選填）'),
+      note,
+      open && r.names.length ? h('button', { class: 'text-btn', onclick: () => { box.value = ''; note.value = ''; refresh(); } }, '清空名單（取消報名）') : null);
+    if (!open) return dock(h('button', { class: 'btn primary', onclick: () => history.back() }, '返回'));
+    const save = h('button', { class: 'btn primary' }, '儲存報名');
+    save.addEventListener('click', async () => {
+      await submit(save, err, { action: 'saveSignup', name, eventId: ev.id, names: splitNames(box.value).join('、'), note: note.value.trim() },
+        () => { go({ v: 'event', id: ev.id }, true); toast('報名已儲存'); });
+    });
+    dock(h('button', { class: 'btn ghost', onclick: () => history.back() }, '取消'), save);
+  }
+
+  async function submit(btn, errBox, body, done) {
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = '儲存中…'; errBox.hidden = true;
+    try { await api(body); done(); }
+    catch (e) {
+      errBox.textContent = (e.message && !/fetch|network/i.test(e.message) ? e.message : '儲存沒有成功，請檢查網路後再試一次。');
+      errBox.hidden = false; window.scrollTo(0, 0);
+    } finally { btn.disabled = false; btn.textContent = label; }
+  }
+
+  /* ---------- 管理者 ---------- */
+  function viewLogin() {
+    const err = h('div', { class: 'error', hidden: true });
+    const pw = h('input', { type: 'password', id: 'pw', autocomplete: 'current-password' });
+    const btn = h('button', { class: 'btn primary' }, '登入');
+    btn.addEventListener('click', async () => {
+      await submit(btn, err, { action: 'checkAdmin', password: pw.value }, () => { adminPw = pw.value; go({ v: 'admin' }, true); });
+    });
+    setApp(
+      h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
+      h('div', { class: 'page-title' }, '管理者入口'),
+      h('p', { class: 'sub' }, '輸入管理密碼後，可以新增和管理活動。'),
+      err, h('label', { class: 'lbl', for: 'pw' }, '管理密碼'), pw);
+    dock(btn);
+  }
+
+  function viewAdmin() {
+    if (!adminPw) return go({ v: 'login' }, true);
+    setApp(
+      h('button', { class: 'back', onclick: () => go({ v: 'evts' }) }, '‹ 回活動報名'),
+      h('div', { class: 'page-title' }, '管理活動'),
+      h('p', { class: 'sub' }, '完整報名名單也會存在試算表的「報名」分頁。'),
+      S.events.length ? h('div', { class: 'card list' }, S.events.map(ev => {
+        const st = signupStats(ev);
+        return h('div', { class: 'admin-item' },
+          h('div', null, h('div', { style: 'font-weight:500' }, ev.name, ev.status === '關閉' ? h('span', { class: 'status closed' }, '已關閉') : null),
+            h('div', { class: 'meta' }, `${eventWhen(ev)}・${st.groups} 組 ${st.people} 人`)),
+          h('button', { class: 'mini', onclick: () => go({ v: 'edit', id: ev.id }) }, '編輯'));
+      })) : h('div', { class: 'card', style: 'padding:18px;color:var(--muted)' }, '還沒有活動，按下方按鈕新增第一個活動。'));
+    dock(h('button', { class: 'btn primary', onclick: () => go({ v: 'edit' }) }, '新增活動'));
+  }
+
+  function viewEdit() {
+    if (!adminPw) return go({ v: 'login' }, true);
+    const ev = S.events.find(e => e.id === route.id) || { name: '', date: '', time: '', place: '', info: '', deadline: '', status: '開放' };
+    const err = h('div', { class: 'error', hidden: true });
+    const f = {
+      name: h('input', { type: 'text', id: 'f-name', maxlength: 40, placeholder: '聖誕感恩晚會' }),
+      date: h('input', { type: 'date', id: 'f-date' }),
+      time: h('input', { type: 'text', id: 'f-time', maxlength: 20, placeholder: '18:00' }),
+      place: h('input', { type: 'text', id: 'f-place', maxlength: 60, placeholder: '教會大堂' }),
+      deadline: h('input', { type: 'date', id: 'f-deadline' }),
+      status: h('select', { id: 'f-status' }, h('option', { value: '開放' }, '開放報名'), h('option', { value: '關閉' }, '關閉報名')),
+      info: h('textarea', { id: 'f-info', maxlength: 500, placeholder: '集合地點、費用、要帶的東西…' })
+    };
+    Object.keys(f).forEach(k => f[k].value = ev[k] || '');
+    if (!f.status.value) f.status.value = '開放';
+    const del = ev.id ? h('button', { class: 'text-btn', onclick: async () => {
+      if (!confirm(`確定要刪除「${ev.name}」嗎？這個活動的報名名單也會一起刪除。`)) return;
+      await submit(del, err, { action: 'deleteEvent', password: adminPw, id: ev.id }, () => { go({ v: 'admin' }, true); toast('活動已刪除'); });
+    } }, '刪除這個活動') : null;
+    setApp(
+      h('button', { class: 'back', onclick: () => history.back() }, '‹ 返回'),
+      h('div', { class: 'page-title' }, ev.id ? '編輯活動' : '新增活動'),
+      err,
+      h('label', { class: 'lbl', for: 'f-name' }, '活動名稱'), f.name,
+      h('div', { class: 'two' },
+        h('div', null, h('label', { class: 'lbl', for: 'f-date' }, '活動日期'), f.date),
+        h('div', null, h('label', { class: 'lbl', for: 'f-time' }, '時間'), f.time)),
+      h('label', { class: 'lbl', for: 'f-place' }, '地點'), f.place,
+      h('div', { class: 'two' },
+        h('div', null, h('label', { class: 'lbl', for: 'f-deadline' }, '報名截止日'), f.deadline),
+        h('div', null, h('label', { class: 'lbl', for: 'f-status' }, '狀態'), f.status)),
+      h('label', { class: 'lbl', for: 'f-info' }, '活動說明'), f.info,
+      del);
+    const save = h('button', { class: 'btn primary' }, '儲存活動');
+    save.addEventListener('click', async () => {
+      if (!f.name.value.trim() || !f.date.value) { err.textContent = '請填寫活動名稱和活動日期。'; err.hidden = false; window.scrollTo(0, 0); return; }
+      const event = { id: ev.id || '' };
+      Object.keys(f).forEach(k => event[k] = f[k].value.trim());
+      await submit(save, err, { action: 'saveEvent', password: adminPw, event }, () => { go({ v: 'admin' }, true); toast('活動已儲存'); });
+    });
+    dock(h('button', { class: 'btn ghost', onclick: () => history.back() }, '取消'), save);
+  }
+
+  /* ---------- 啟動 ---------- */
+  document.getElementById('tabCal').addEventListener('click', () => go({ v: 'cal' }));
+  document.getElementById('tabEvt').addEventListener('click', () => go({ v: 'evts' }));
+
+  (async function start() {
+    history.replaceState(route, '');
+    try { await api(); render(); }
+    catch (e) {
+      setApp(h('div', { class: 'error' }, '資料載入失敗，請檢查網路後重新整理頁面。'));
+    }
+  })();
 </script>
 </body>
 </html>
