@@ -30,7 +30,7 @@
     color-scheme: light;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html { background: var(--bg); -webkit-text-size-adjust: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
@@ -92,6 +92,28 @@
   .wevt .arrow { color: var(--brand); }
   .tlink { border: 0; background: none; color: var(--brand); text-decoration: underline; padding: 0; font-size: inherit; text-align: left; display: block; }
   .table-wrap { overflow-x: auto; }
+  .note-box { background: #FFF6DB; border-left: 4px solid #E5A823; border-radius: 6px; padding: 6px 10px; margin-top: 6px; font-size: 0.9375rem; color: var(--ink); }
+  .note-box b { color: #8A5A00; font-weight: 700; margin-right: 6px; }
+  .photos { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .thumb { width: 6.5rem; height: 6.5rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); padding: 0; background: var(--paper); position: relative; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .zoom-hint { font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
+  .thumb-del { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(30,42,36,0.85); color: #fff; font-size: 15px; line-height: 28px; padding: 0; }
+  .add-photo { width: 6.5rem; height: 6.5rem; border-radius: 10px; border: 1.5px dashed #B9C1B9; background: var(--paper); color: var(--muted); font-size: 0.875rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+  .add-photo span { font-size: 1.75rem; line-height: 1; }
+  .hint-box { background: #FFF6DB; color: #6B4700; border-radius: 8px; padding: 8px 12px; font-size: 0.9375rem; margin-bottom: 8px; }
+  .notes-sum { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 0 0 16px; }
+  .notes-sum .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .notes-sum .head b { font-size: 0.9375rem; }
+  .notes-sum .item { display: grid; grid-template-columns: auto 1fr; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 0.9375rem; }
+  .notes-sum .item b { color: var(--c); font-weight: 700; }
+  .lightbox { position: fixed; inset: 0; background: #0E0F0E; z-index: 50; display: flex; flex-direction: column; padding: calc(10px + env(safe-area-inset-top, 0px)) 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .lb-top { display: flex; justify-content: space-between; align-items: center; color: #ddd; font-size: 15px; }
+  .lb-close { border: 0; background: #fff; color: #111; border-radius: 22px; padding: 8px 18px; font-size: 17px; font-weight: 700; }
+  .lb-img { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+  .lb-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .lb-nav { display: flex; justify-content: center; gap: 16px; margin-top: 10px; }
+  .lb-nav button { border: 1px solid #666; background: none; color: #fff; border-radius: 22px; padding: 8px 20px; font-size: 16px; }
   table { border-collapse: collapse; font-size: 0.9375rem; white-space: nowrap; background: var(--paper); }
   th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
   thead th { font-weight: 700; }
@@ -231,7 +253,7 @@
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
   const START_YEAR = 2026;
-  const VERSION = '1106-1800';
+  const VERSION = '1107-1200';
   const FONT_SIZES = [['小', 15], ['中', 16], ['大', 18.5], ['特大', 21]];
   let fontPx = 16;
   try { fontPx = Number(localStorage.getItem('fontPx')) || 16; } catch (e) {}
@@ -295,6 +317,60 @@
     const start = weeklyToISO(label), end = addDays(start, 6);
     return S.events.filter(ev => ev.date >= start && ev.date <= end);
   }
+  function photoUrl(id, w) {
+    return id.startsWith('data:') ? id : `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w || 1600}`;
+  }
+  function photoImg(id, w) {
+    const img = h('img', { src: photoUrl(id, w), alt: '活動照片', loading: 'lazy' });
+    img.addEventListener('error', () => { if (!img.dataset.fb && !id.startsWith('data:')) { img.dataset.fb = '1'; img.src = `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${w || 1600}`; } });
+    return img;
+  }
+  function photoStrip(ids) {
+    if (!ids || !ids.length) return null;
+    return h('div', null,
+      h('div', { class: 'photos' }, ids.map((id, i) => h('button', { class: 'thumb', 'aria-label': `放大第 ${i + 1} 張照片`, onclick: () => openLightbox(ids, i) }, photoImg(id, 400)))),
+      h('div', { class: 'zoom-hint' }, '點圖片可以放大'));
+  }
+  function openLightbox(ids, start) {
+    let i = start;
+    const img = h('div', { class: 'lb-img' });
+    const count = h('span');
+    const box = h('div', { class: 'lightbox', role: 'dialog', 'aria-label': '照片放大檢視' });
+    const close = () => { box.remove(); document.body.style.overflow = ''; };
+    const show = () => { img.replaceChildren(photoImg(ids[i], 2000)); count.textContent = ids.length > 1 ? `${i + 1} / ${ids.length}` : ''; };
+    const step = d => { i = (i + d + ids.length) % ids.length; show(); };
+    box.append(h('div', { class: 'lb-top' }, count, h('button', { class: 'lb-close', onclick: close }, '✕ 關閉')), img);
+    if (ids.length > 1) box.append(h('div', { class: 'lb-nav' }, h('button', { onclick: () => step(-1) }, '‹ 上一張'), h('button', { onclick: () => step(1) }, '下一張 ›')));
+    img.addEventListener('click', e => { if (e.target === img) close(); });
+    let sx = null;
+    img.addEventListener('touchstart', e => { sx = e.touches.length === 1 ? e.touches[0].clientX : null; }, { passive: true });
+    img.addEventListener('touchend', e => {
+      if (sx == null || ids.length < 2) return;
+      const dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 60) step(dx < 0 ? 1 : -1);
+      sx = null;
+    });
+    document.body.style.overflow = 'hidden';
+    document.body.append(box);
+    show();
+  }
+  function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const im = new Image();
+      im.onload = () => {
+        const max = 1600;
+        const r = Math.min(1, max / Math.max(im.width, im.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.width * r); c.height = Math.round(im.height * r);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg', 0.82));
+      };
+      im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('這張照片無法讀取，請換一張')); };
+      im.src = url;
+    });
+  }
   function eventWhen(ev) {
     const p = parts(ev.date);
     return `${p.short}（${p.w.slice(1)}）${ev.time ? ' ' + ev.time : ''}`;
@@ -325,6 +401,13 @@
     if (!json.ok) throw new Error(json.error || '發生錯誤');
     S = json;
     return json;
+  }
+
+  async function uploadPhoto(dataUrl) {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'uploadPhoto', password: adminPw, data: dataUrl.split(',')[1] }) });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || '照片上傳失敗');
+    return json.id;
   }
 
   function toast(msg) {
@@ -502,6 +585,8 @@
           ? h('div', { class: 'missing' }, h('div', null, h('b', null, `尚未報名（${missing.length} 組）`), '：' + missing.join('、')), h('div', { style: 'margin-top:8px' }, copyBtn))
           : h('div', { class: 'missing', style: 'color:var(--ok);font-weight:700' }, '所有小組都已報名')),
       ev.info ? h('div', { class: 'info-box' }, ev.info) : null,
+      photoStrip(ev.photos),
+      notesSummary(ev, s),
       h('div', { class: 'section-head' }, '各小組報名名單'),
       groups().map(g => {
         const sub = g.names.reduce((t, n) => t + ((s[n] || {}).count || 0), 0);
@@ -512,10 +597,24 @@
             return h('div', { class: 'leader' },
               h('div', { class: 'leader-top' }, h('b', null, n), r && r.count ? h('span', { class: 'count' }, r.count + ' 人') : h('span', { class: 'pending' }, '尚未報名')),
               r && r.count ? h('div', { class: 'names' }, r.names.join('、')) : null,
-              r && r.note ? h('div', { class: 'note' }, '備註：' + r.note) : null);
+              r && r.note ? h('div', { class: 'note-box' }, h('b', null, '備註'), r.note) : null);
           }));
       }));
     dock(open ? h('button', { class: 'btn primary', onclick: () => go({ v: 'pick', next: ev.id }) }, '幫我的小組報名') : fillBtn());
+  }
+
+  function notesSummary(ev, s) {
+    const list = [];
+    groups().forEach(g => g.names.forEach(n => { if (s[n] && s[n].note) list.push([g.category, n, s[n].note]); }));
+    if (!list.length) return null;
+    const copy = h('button', { class: 'mini', onclick: async () => {
+      const text = `【${ev.name}】備註彙整\n` + list.map(([, n, note]) => `${n}：${note}`).join('\n');
+      try { await navigator.clipboard.writeText(text); toast('已複製，可以貼到 LINE'); }
+      catch (e) { prompt('請複製下面的文字', text); }
+    } }, '複製');
+    return h('div', { class: 'notes-sum', style: 'margin-top:16px' },
+      h('div', { class: 'head' }, h('b', null, `備註彙整（${list.length} 則）`), copy),
+      list.map(([cat, n, note]) => h('div', { class: 'item', style: catVars(cat) }, h('b', null, n), h('span', null, note))));
   }
 
   /* ---------- 小組長 ---------- */
@@ -597,7 +696,7 @@
     const err = h('div', { class: 'error', hidden: true });
     const box = h('textarea', { id: 'names', placeholder: '王小明、陳美玲、林大華', disabled: !open });
     box.value = r.names.join('、');
-    const note = h('input', { type: 'text', id: 'note', maxlength: 100, placeholder: '素食 1 位、需要接送', disabled: !open });
+    const note = h('textarea', { id: 'note', maxlength: 200, rows: 2, style: 'min-height:80px', placeholder: ev.noteHint ? '' : '素食 1 位、需要接送', disabled: !open });
     note.value = r.note || '';
     const preview = h('div', { class: 'preview' });
     const counter = h('div', { class: 'counter' });
@@ -614,11 +713,13 @@
       h('div', { class: 'meta' }, eventWhen(ev) + (ev.place ? '｜' + ev.place : '')),
       ev.deadline ? h('div', { class: 'meta' }, '報名截止 ' + parts(ev.deadline).short) : null,
       ev.info ? h('div', { class: 'info-box' }, ev.info) : null,
+      photoStrip(ev.photos),
       !open ? h('div', { class: 'error', style: 'margin-top:14px' }, '這個活動已截止報名，名單無法修改。') : null,
       err,
       h('label', { class: 'lbl', for: 'names' }, '參加的組員（用頓號隔開，或一行一位）'),
       box, counter, preview,
-      h('label', { class: 'lbl', for: 'note' }, '備註（選填）'),
+      h('label', { class: 'lbl', for: 'note' }, ev.noteHint ? '備註' : '備註（選填）'),
+      ev.noteHint ? h('div', { class: 'hint-box' }, ev.noteHint) : null,
       note,
       open && r.names.length ? h('button', { class: 'text-btn', onclick: () => { box.value = ''; note.value = ''; refresh(); } }, '清空名單（取消報名）') : null);
     if (!open) return actions(h('button', { class: 'btn primary', onclick: () => history.back() }, '返回'));
@@ -683,8 +784,30 @@
       place: h('input', { type: 'text', id: 'f-place', maxlength: 60, placeholder: '教會大堂' }),
       deadline: h('input', { type: 'date', id: 'f-deadline' }),
       status: h('select', { id: 'f-status' }, h('option', { value: '開放' }, '開放報名'), h('option', { value: '關閉' }, '關閉報名')),
-      info: h('textarea', { id: 'f-info', maxlength: 500, placeholder: '集合地點、費用、要帶的東西…' })
+      info: h('textarea', { id: 'f-info', maxlength: 500, placeholder: '集合地點、費用、要帶的東西…' }),
+      noteHint: h('input', { type: 'text', id: 'f-hint', maxlength: 80, placeholder: '例：請寫便當品項和數量' })
     };
+    let photos = (ev.photos || []).slice();
+    let uploading = false;
+    const photoBox = h('div', { class: 'photos', style: 'margin-top:0' });
+    const fileInput = h('input', { type: 'file', accept: 'image/*', hidden: true });
+    const drawPhotos = () => {
+      photoBox.replaceChildren(
+        ...photos.map((id, i) => h('div', { class: 'thumb' }, photoImg(id, 400),
+          h('button', { class: 'thumb-del', 'aria-label': '移除這張照片', onclick: () => { photos.splice(i, 1); drawPhotos(); } }, '✕'))),
+        photos.length < 3 ? h('button', { class: 'add-photo', disabled: uploading, onclick: () => fileInput.click() },
+          h('span', null, uploading ? '…' : '+'), uploading ? '上傳中' : '加照片') : '');
+    };
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files[0];
+      fileInput.value = '';
+      if (!file) return;
+      uploading = true; drawPhotos(); err.hidden = true;
+      try { photos.push(await uploadPhoto(await compressImage(file))); }
+      catch (e) { err.textContent = e.message && !/fetch|network/i.test(e.message) ? e.message : '照片上傳失敗，請檢查網路後再試一次。'; err.hidden = false; }
+      finally { uploading = false; drawPhotos(); }
+    });
+    drawPhotos();
     Object.keys(f).forEach(k => f[k].value = ev[k] || '');
     if (!f.status.value) f.status.value = '開放';
     const del = ev.id ? h('button', { class: 'text-btn', onclick: async () => {
@@ -704,12 +827,16 @@
         h('div', null, h('label', { class: 'lbl', for: 'f-deadline' }, '報名截止日'), f.deadline),
         h('div', null, h('label', { class: 'lbl', for: 'f-status' }, '狀態'), f.status)),
       h('label', { class: 'lbl', for: 'f-info' }, '活動說明'), f.info,
+      h('label', { class: 'lbl' }, '活動照片（選填，最多 3 張，例如菜單）'), photoBox, fileInput,
+      h('label', { class: 'lbl', for: 'f-hint' }, '備註提示（選填，會顯示在報名頁的備註欄）'), f.noteHint,
       del);
     const save = h('button', { class: 'btn primary' }, '儲存活動');
     save.addEventListener('click', async () => {
+      if (uploading) { err.textContent = '照片還在上傳中，請稍等一下。'; err.hidden = false; window.scrollTo(0, 0); return; }
       if (!f.name.value.trim() || !f.date.value) { err.textContent = '請填寫活動名稱和活動日期。'; err.hidden = false; window.scrollTo(0, 0); return; }
       const event = { id: ev.id || '' };
       Object.keys(f).forEach(k => event[k] = f[k].value.trim());
+      event.photos = photos;
       await submit(save, err, { action: 'saveEvent', password: adminPw, event }, () => { go({ v: 'admin' }, true); toast('活動已儲存'); });
     });
     actions(h('button', { class: 'btn ghost', onclick: () => history.back() }, '取消'), save);
