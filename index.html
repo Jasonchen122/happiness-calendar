@@ -253,7 +253,7 @@
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
   const START_YEAR = 2026;
-  const VERSION = '1107-1200';
+  const VERSION = '1107-1230';
   const FONT_SIZES = [['小', 15], ['中', 16], ['大', 18.5], ['特大', 21]];
   let fontPx = 16;
   try { fontPx = Number(localStorage.getItem('fontPx')) || 16; } catch (e) {}
@@ -365,7 +365,7 @@
         c.width = Math.round(im.width * r); c.height = Math.round(im.height * r);
         c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
         URL.revokeObjectURL(url);
-        resolve(c.toDataURL('image/jpeg', 0.82));
+        resolve(c.toDataURL('image/jpeg', 0.78));
       };
       im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('這張照片無法讀取，請換一張')); };
       im.src = url;
@@ -404,10 +404,25 @@
   }
 
   async function uploadPhoto(dataUrl) {
-    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'uploadPhoto', password: adminPw, data: dataUrl.split(',')[1] }) });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error || '照片上傳失敗');
-    return json.id;
+    const token = 'u' + Date.now() + Math.random().toString(36).slice(2, 8);
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'uploadPhoto', password: adminPw, token, data: dataUrl.split(',')[1] }) });
+      const json = await res.json();
+      if (json.ok) return json.id;
+      if (json.error) throw Object.assign(new Error(json.error), { server: true });
+    } catch (e) {
+      if (e.server) throw e;
+    }
+    // 回應沒收到時，到後台確認照片是否其實已經存好
+    for (let i = 0; i < 5; i++) {
+      await new Promise(r => setTimeout(r, 1500 + i * 1000));
+      try {
+        const res = await fetch(API_URL + '?photo=' + encodeURIComponent(token), { cache: 'no-store' });
+        const json = await res.json();
+        if (json.ok && json.id) return json.id;
+      } catch (e) {}
+    }
+    throw new Error('照片上傳沒有成功，請確認網路後再試一次。');
   }
 
   function toast(msg) {
@@ -736,7 +751,7 @@
     btn.disabled = true; btn.textContent = '儲存中…'; errBox.hidden = true;
     try { await api(body); done(); }
     catch (e) {
-      errBox.textContent = (e.message && !/fetch|network/i.test(e.message) ? e.message : '儲存沒有成功，請檢查網路後再試一次。');
+      errBox.textContent = (e.message && !/fetch|network|load failed/i.test(e.message) ? e.message : '儲存沒有成功，請檢查網路後再試一次。');
       errBox.hidden = false; window.scrollTo(0, 0);
     } finally { btn.disabled = false; btn.textContent = label; }
   }
@@ -804,7 +819,7 @@
       if (!file) return;
       uploading = true; drawPhotos(); err.hidden = true;
       try { photos.push(await uploadPhoto(await compressImage(file))); }
-      catch (e) { err.textContent = e.message && !/fetch|network/i.test(e.message) ? e.message : '照片上傳失敗，請檢查網路後再試一次。'; err.hidden = false; }
+      catch (e) { err.textContent = e.message && !/fetch|network|load failed/i.test(e.message) ? e.message : '照片上傳失敗，請檢查網路後再試一次。'; err.hidden = false; }
       finally { uploading = false; drawPhotos(); }
     });
     drawPhotos();
