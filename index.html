@@ -58,7 +58,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .top .wrap{padding-block:calc(16px + env(safe-area-inset-top,0px)) 14px}
 .top small{display:block;font-size:.8rem;letter-spacing:.08em;font-weight:500}
 .top h1{margin:2px 0 10px;font-size:1.55rem}
-.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--tab-bg);border:1px solid var(--tab-line);border-radius:14px;padding:4px;margin-top:8px}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--tab-bg);border:1px solid var(--tab-line);border-radius:14px;padding:4px;margin-top:8px}
 .tabs button{border:0;background:none;color:inherit;padding:9px 0;border-radius:10px;font-size:1.05rem}
 .tabs button{font-weight:500}
 .tabs button[aria-selected="true"]{font-weight:700;background:var(--hl);color:var(--tab-on-ink)}
@@ -319,21 +319,66 @@ a.btn{display:block;text-align:center;text-decoration:none}
 .sticky-save{display:flex;gap:8px;margin-top:6px}
 .sticky-save .btn{min-height:3.2rem;font-size:1.1rem}
 
+/* 檔案 */
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:.92rem;color:var(--muted)}
+.crumbs .crumb{border:0;background:none;padding:2px 0;color:var(--link);font-weight:700;font-size:inherit}
+.crumbs b{color:var(--ink)}
+.crumbs .sep{color:var(--faint)}
+.flist .frow{display:flex;align-items:center;gap:6px;padding-right:10px}
+.flist .frow+.frow{border-top:1px solid var(--line)}
+.fmain{flex:1;min-width:0;display:flex;align-items:center;gap:12px;border:0;background:none;text-align:left;padding:12px 4px 12px 14px;min-height:3.6rem;color:inherit}
+.ftx{flex:1;min-width:0}
+.ftx b{display:block;font-weight:600;font-size:1.02rem;overflow-wrap:anywhere}
+.ftx small{color:var(--muted);font-size:.8rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fico{flex:0 0 auto;width:2.4rem;height:2.4rem;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:.78rem;color:#fff;letter-spacing:.02em}
+.fk-dir{background:var(--k3b,#FCEFC7)}
+.fk-dir i{width:1.4rem;height:1.05rem;border-radius:3px;background:#E3A92B;position:relative;display:block}
+.fk-dir i::before{content:"";position:absolute;left:0;top:-.22rem;width:.65rem;height:.3rem;border-radius:3px 3px 0 0;background:#E3A92B}
+.fk-pdf{background:#D5533F}.fk-doc{background:#2F6FD1}.fk-xls{background:#23875A}.fk-ppt{background:#D8742B}
+.fk-img{background:#8B63C9}.fk-vid{background:#C2477A}.fk-etc{background:#7A8580}
+.newtag{background:var(--hl,#E77F9C);color:#fff;border-radius:6px;padding:0 6px;font-size:.72rem;font-weight:700}
+.mini.more{font-size:1.1rem;line-height:1;padding:6px 12px;flex:0 0 auto}
+.fadmin{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fadmin .btn{min-height:3rem}
+.extrow{display:flex;align-items:center;gap:6px}.extrow span{color:var(--muted);font-weight:600}
+.upbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:14px;z-index:70;max-width:calc(100% - 32px);font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fview{position:fixed;inset:0;background:var(--paper);z-index:60;display:flex;flex-direction:column}
+.fv-top{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 10px max(12px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.fv-top b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fv-top .fico{width:2rem;height:2rem;font-size:.7rem}
+.fv-top .lb-close{background:var(--bg);color:var(--ink);border:1px solid var(--line);font-size:1rem;padding:6px 14px;flex:0 0 auto}
+.fv-body{flex:1;min-height:0;background:#525659;display:flex}
+.fv-body iframe{border:0;width:100%;height:100%;background:#fff}
+.fv-img{flex:1;display:flex;align-items:center;justify-content:center;background:#111}
+.fv-img img{max-width:100%;max-height:100%;object-fit:contain}
+.fv-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));border-top:1px solid var(--line)}
+.fv-acts .btn{text-align:center;text-decoration:none;min-height:3rem;display:grid;place-items:center}
+.fv-acts .btn:only-child{grid-column:1/-1}
+body.big .tabs button{font-size:.95rem}
+/* 分頁圖示（馬卡龍色塊） */
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 6px;line-height:1.2}
+.tic{width:2.1rem;height:2.1rem;border-radius:10px;display:grid;place-items:center;color:#fff}
+.tic svg{width:62%;height:62%}
+.tc1{background:#E3A98B}.tc2{background:#7FBF9C}.tc3{background:#E58FA6}.tc4{background:#8FAEE3}
+.tabs button[aria-selected="true"]{background:var(--paper);color:var(--hl);box-shadow:0 0 0 2px var(--hl) inset}
+.tabs button[aria-selected="true"] .tn{background:var(--hl);color:#fff}
+body.big .tic{width:1.8rem;height:1.8rem}
+
 body{margin:0}
 </style>
 </head>
 <body>
 <header class="top pink" id="top"><div class="wrap">
-  <div class="hrow"><div><small>行事曆・活動報名・公告</small><h1>盈欣牧區小組平台</h1></div><div id="adminPill"></div></div>
+  <div class="hrow"><div><small>行事曆・活動報名・公告・檔案</small><h1>盈欣牧區小組平台</h1></div><div id="adminPill"></div></div>
   <div class="macaron" aria-hidden="true"><i class="g0"></i><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="g4"></i></div>
-  <div class="tabs" role="tablist"><button role="tab" id="tCal">行事曆</button><button role="tab" id="tSig">活動報名</button><button role="tab" id="tAnn">公告<span class="tn" id="annN"></span></button></div>
+  <div class="tabs" role="tablist"><button role="tab" id="tCal"><span class="tic tc1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="tl">行事曆</span></button><button role="tab" id="tSig"><span class="tic tc2" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><rect x="9" y="2.5" width="6" height="3.5" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span><span class="tl">報名</span></button><button role="tab" id="tAnn"><span class="tic tc3" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5v3a1 1 0 0 0 1 1h2.5L13 19V5L7.5 9.5H5a1 1 0 0 0-1 1z"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10"/></svg></span><span class="tl">公告<span class="tn" id="annN"></span></span></button><button role="tab" id="tFile"><span class="tic tc4" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2.2h7.5A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg></span><span class="tl">檔案</span></button></div>
 </div></header>
 <main class="wrap" id="app"><div class="loading">正在載入…</div></main>
 <div class="dock" id="dock" hidden></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
-const VERSION = '1114-2000';
+const VERSION = '1114-2200';
 const WEEKLY_CAT = '小組活動';
 
 /* ---------- 日期 ---------- */
@@ -979,12 +1024,173 @@ function viewAnnEdit() {
 }
 function updBadge() { const n = annActive().length; const el = document.getElementById('annN'); el.textContent = n || ''; el.hidden = !n; }
 
+/* ---------- 檔案 ---------- */
+const FILE_EXT = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'jpg', 'jpeg', 'png', 'heic', 'gif', 'txt', 'mp3', 'm4a', 'mp4', 'mov'];
+const MAX_FILE_MB = 20;
+const FILES = {};   // 資料夾 id → 清單
+function fileKind(f) {
+  const ext = (f.name.toLowerCase().match(/\.([a-z0-9]+)$/) || [])[1] || '', m = f.mime || '';
+  if (ext === 'pdf' || m === 'application/pdf') return ['PDF', 'fk-pdf'];
+  if (/^xlsx?$/.test(ext) || /spreadsheet|ms-excel/.test(m)) return ['X', 'fk-xls'];
+  if (/^pptx?$/.test(ext) || /presentation|powerpoint/.test(m)) return ['P', 'fk-ppt'];
+  if (/^docx?$/.test(ext) || /wordprocessing|msword|google-apps\.document/.test(m)) return ['W', 'fk-doc'];
+  if (/^(jpe?g|png|heic|gif)$/.test(ext) || /^image\//.test(m)) return ['圖', 'fk-img'];
+  if (/^(mp4|mov)$/.test(ext) || /^video\//.test(m)) return ['影', 'fk-vid'];
+  if (/^(mp3|m4a)$/.test(ext) || /^audio\//.test(m)) return ['音', 'fk-vid'];
+  return ['檔', 'fk-etc'];
+}
+const fsize = b => !b ? '' : b < 1024 * 1024 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+const isNewFile = f => { const d = fromIso(f.updated); return d != null && TODAY - d <= 7; };
+async function loadFolder(id, quiet) {
+  id = id || 'root';
+  let res;
+  try { res = await fetch(API_URL + '?files=' + encodeURIComponent(id), { cache: 'no-store' }); }
+  catch (e) { throw new Error('網路連線不穩，請稍後再試一次。'); }
+  const j = await res.json();
+  if (!j.ok) throw new Error(j.error || '讀取檔案失敗');
+  j._t = Date.now(); FILES[j.folder.id] = j; if (id !== j.folder.id) FILES[id] = j;
+  return j;
+}
+async function fileApi(btn, body) {
+  const label = btn && btn.textContent;
+  if (btn) { btn.disabled = true; btn.textContent = '處理中…'; }
+  try {
+    let res;
+    try { res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(adminBody(body)) }); }
+    catch (e) { throw new Error('網路連線不穩，請稍後再試一次。'); }
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error || '發生錯誤，請再試一次');
+    Object.keys(FILES).forEach(k => delete FILES[k]); j._t = Date.now(); FILES[j.folder.id] = j; return j;
+  } finally { if (btn) { btn.disabled = false; btn.textContent = label; } }
+}
+function viewFiles() {
+  const id = S.folder || 'root', j = FILES[id];
+  if (!j) {
+    setApp(h('div', { class: 'ptitle' }, '檔案'), h('div', { class: 'loading' }, '正在讀取檔案…'));
+    dock();
+    loadFolder(id).then(() => { if (S.tab === 'files' && (S.folder || 'root') === id) render(); })
+      .catch(e => { if (S.tab === 'files') setApp(h('div', { class: 'ptitle' }, '檔案'), h('div', { class: 'err' }, e.message),
+        h('button', { class: 'btn ghost wide', style: 'margin-top:10px', onclick: () => go({ tab: 'files', folder: null }) }, '回到最上層')); });
+    return;
+  }
+  if (Date.now() - j._t > 60000 && !j._busy) { j._busy = true;   // 超過一分鐘，背景再更新一次
+    loadFolder(id).then(() => { if (S.tab === 'files' && (S.folder || 'root') === id && !document.querySelector('.scrim,.fview')) render(); }).catch(() => { j._busy = false; }); }
+  const folders = j.items.filter(x => x.t === 'folder').sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'));
+  const files = j.items.filter(x => x.t === 'file').sort((a, b) => String(b.updated).localeCompare(String(a.updated)) || a.name.localeCompare(b.name, 'zh-Hant'));
+  const crumbs = [h('button', { class: 'crumb', onclick: () => go({ tab: 'files', folder: null }) }, '共用檔案')];
+  j.path.forEach((p, i) => { crumbs.push(h('span', { class: 'sep' }, '›'));
+    crumbs.push(i === j.path.length - 1 ? h('b', null, p.name) : h('button', { class: 'crumb', onclick: () => go({ tab: 'files', folder: p.id }) }, p.name)); });
+  const more = x => S.admin ? h('button', { class: 'mini more', 'aria-label': x.name + ' 的更多動作', onclick: ev => { ev.stopPropagation(); itemSheet(x); } }, '⋯') : null;
+  const frow = f => h('div', { class: 'frow' },
+    h('button', { class: 'fmain', onclick: () => go({ tab: 'files', folder: f.id }) },
+      h('span', { class: 'fico fk-dir', 'aria-hidden': 'true' }, h('i')), h('span', { class: 'ftx' }, h('b', null, f.name), h('small', null, f.count ? f.count + ' 個項目' : '空的資料夾'))),
+    more(f) || h('span', { class: 'chev' }, '›'));
+  const rowFile = f => { const k = fileKind(f);
+    return h('div', { class: 'frow' },
+      h('button', { class: 'fmain', onclick: () => viewer(f) },
+        h('span', { class: 'fico ' + k[1], 'aria-hidden': 'true' }, k[0]),
+        h('span', { class: 'ftx' }, h('b', null, f.name), h('small', null, [fd(fromIso(f.updated)) + ' 更新', fsize(f.size)].filter(Boolean).join('・'), isNewFile(f) ? h('span', { class: 'newtag' }, '新') : null))),
+      more(f)); };
+  const upInput = h('input', { type: 'file', multiple: true, hidden: true, accept: FILE_EXT.map(e => '.' + e).join(',') });
+  upInput.addEventListener('change', () => { const list = [...upInput.files]; upInput.value = ''; if (list.length) uploadFiles(list, id); });
+  setApp(
+    h('div', { class: 'ptitle' }, '檔案'),
+    h('nav', { class: 'crumbs', 'aria-label': '目前位置' }, crumbs),
+    j.path.length ? h('button', { class: 'back', onclick: () => go({ tab: 'files', folder: j.path.length > 1 ? j.path[j.path.length - 2].id : null }) }, '‹ 上一層') : h('div', { class: 'note' }, '會議紀錄、文件都放在這裡，點一下就能看，也可以下載。'),
+    folders.length || files.length ? h('div', { class: 'inset flist' }, folders.map(frow), files.map(rowFile))
+      : h('div', { class: 'card', style: 'padding:22px 16px;text-align:center' }, h('div', { class: 'note' }, '這個資料夾還沒有檔案')),
+    S.admin ? h('div', { class: 'fadmin' },
+      h('button', { class: 'btn ghost', onclick: () => mkdirSheet(id) }, '＋ 新增資料夾'),
+      h('button', { class: 'btn', onclick: () => upInput.click() }, '⤒ 上傳檔案'), upInput) : null,
+    S.admin ? h('div', { class: 'note' }, `可上傳 PDF、Word、Excel、PowerPoint、照片、影音，每個檔案 ${MAX_FILE_MB}MB 以內。更大的檔案請用 Google 雲端硬碟 App 放進「盈欣牧區共享檔案」資料夾，這裡會自動出現。`) : null,
+    footer());
+  dock();
+}
+function mkdirSheet(parent) {
+  const inp = h('input', { id: 'fname', maxlength: 40, placeholder: '例如：2027 會議紀錄', style: inputStyle });
+  formSheet('新增資料夾', h('div', { style: 'display:grid;gap:10px' }, h('label', { for: 'fname', class: 'note' }, '資料夾名稱'), inp), close => {
+    const save = h('button', { class: 'btn' }, '建立');
+    save.addEventListener('click', async () => { const v = inp.value.trim(); if (!v) return toast('請輸入資料夾名稱');
+      try { await fileApi(save, { action: 'fileMkdir', parent, name: v }); close(); render(); toast('已建立「' + v + '」'); } catch (e) { toast(e.message); } });
+    return save;
+  });
+  setTimeout(() => inp.focus(), 50);
+}
+function itemSheet(x) {
+  const parent = S.folder || 'root', kind = x.t === 'folder' ? 'folder' : 'file';
+  let base = x.name, ext = '';
+  if (kind === 'file') { const m = x.name.match(/^(.*?)(\.[a-z0-9]{1,5})$/i); if (m) { base = m[1]; ext = m[2]; } }
+  const inp = h('input', { id: 'rname', value: base, maxlength: 75, style: inputStyle });
+  const warn = h('div', { class: 'confirm', hidden: true }, kind === 'folder'
+    ? (x.count ? `裡面的 ${x.count} 個項目會一起刪除。` : '') + '會移到雲端硬碟的垃圾桶，30 天內可以救回。再按一次「刪除」確認。'
+    : '會移到雲端硬碟的垃圾桶，30 天內可以救回。再按一次「刪除」確認。');
+  formSheet(kind === 'folder' ? '資料夾：改名或刪除' : '檔案：改名或刪除', h('div', { style: 'display:grid;gap:10px' },
+    h('label', { for: 'rname', class: 'note' }, '名稱'), ext ? h('div', { class: 'extrow' }, inp, h('span', null, ext)) : inp, warn), close => {
+    const save = h('button', { class: 'btn' }, '儲存名稱');
+    save.addEventListener('click', async () => { const v = inp.value.trim(); if (!v) return toast('請輸入名稱');
+      if (v + ext === x.name) return close();
+      try { await fileApi(save, { action: 'fileRename', parent, id: x.id, kind, name: v + ext }); close(); render(); toast('已改名'); } catch (e) { toast(e.message); } });
+    const del = h('button', { class: 'btn ghost', style: 'color:var(--danger)' }, '刪除');
+    del.addEventListener('click', async () => { if (warn.hidden) { warn.hidden = false; return; }
+      try { await fileApi(del, { action: 'fileDelete', parent, id: x.id, kind }); close(); render(); toast('已刪除「' + x.name + '」'); } catch (e) { toast(e.message); } });
+    return h('div', { style: 'display:grid;gap:8px' }, save, del);
+  });
+}
+function readB64(file) {
+  return new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = () => bad(new Error('檔案讀取失敗：' + file.name)); r.readAsDataURL(file); });
+}
+async function uploadFiles(list, parent) {
+  const bad = list.filter(f => !FILE_EXT.includes((f.name.split('.').pop() || '').toLowerCase()));
+  if (bad.length) return toast('這種格式不能上傳：' + bad[0].name);
+  const big = list.find(f => f.size > MAX_FILE_MB * 1048576);
+  if (big) return toast(`「${big.name}」超過 ${MAX_FILE_MB}MB，請改用 Google 雲端硬碟 App 上傳`);
+  const bar = h('div', { class: 'upbar', role: 'status' }); document.body.append(bar);
+  let done = 0;
+  try {
+    for (const f of list) {
+      bar.textContent = `上傳中 ${done + 1} / ${list.length}：${f.name}`;
+      const data = await readB64(f), token = 'f' + Date.now() + Math.random().toString(36).slice(2, 8);
+      const body = { action: 'fileUpload', parent, name: f.name, mime: f.type, data, token };
+      try { await fileApi(null, body); }
+      catch (e) {
+        if (!/網路/.test(e.message)) throw e;
+        await new Promise(r => setTimeout(r, 2500));   // 網路斷掉時：看看檔案是不是其實已經上傳成功
+        const j = await loadFolder(parent).catch(() => null);
+        if (!j || !j.items.some(x => x.t === 'file' && x.name === f.name.slice(0, 80))) throw new Error('「' + f.name + '」上傳沒有成功，請確認網路後再試一次。');
+      }
+      done++;
+    }
+    toast(list.length > 1 ? `已上傳 ${done} 個檔案` : '已上傳「' + list[0].name + '」');
+  } catch (e) { toast(e.message); }
+  finally { bar.remove(); if (S.tab === 'files') render(); }
+}
+function viewer(f) {
+  const k = fileKind(f), enc = encodeURIComponent(f.id), gdoc = /^application\/vnd\.google-apps\./.test(f.mime || '');
+  const gtype = (f.mime || '').split('.').pop();
+  const gbase = { document: 'document', spreadsheet: 'spreadsheets', presentation: 'presentation' }[gtype];
+  const open = gdoc && gbase ? `https://docs.google.com/${gbase}/d/${enc}/view` : `https://drive.google.com/file/d/${enc}/view`;
+  const preview = gdoc && gbase ? `https://docs.google.com/${gbase}/d/${enc}/preview` : `https://drive.google.com/file/d/${enc}/preview`;
+  const box = h('div', { class: 'fview', role: 'dialog', 'aria-label': f.name });
+  const close = () => { box.remove(); document.body.style.overflow = ''; };
+  let body;
+  if (window.DEMO_PREVIEW) body = window.DEMO_PREVIEW(f, k);
+  else if (k[1] === 'fk-img') body = h('div', { class: 'fv-img' }, photoImg(f.id, 2000));
+  else body = h('iframe', { src: preview, title: f.name, allow: 'autoplay', loading: 'eager' });
+  box.append(
+    h('div', { class: 'fv-top' }, h('span', { class: 'fico ' + k[1], 'aria-hidden': 'true' }, k[0]), h('b', null, f.name), h('button', { class: 'lb-close', onclick: close }, '✕ 關閉')),
+    h('div', { class: 'fv-body' }, body),
+    h('div', { class: 'fv-acts' },
+      gdoc ? null : h('a', { class: 'btn', href: `https://drive.google.com/uc?export=download&id=${enc}`, target: '_blank', rel: 'noopener' }, '⤓ 下載'),
+      h('a', { class: 'btn ghost', href: open, target: '_blank', rel: 'noopener' }, '用 Google 開啟 ↗')));
+  document.body.style.overflow = 'hidden'; document.body.append(box);
+}
+
 /* ---------- 頁尾、管理者 ---------- */
 function footer() {
   return h('div', { class: 'foot' }, h('div', { class: 'note' }, '字體大小'),
     h('div', { class: 'fsrow', role: 'group', 'aria-label': '字體大小' }, [['小', 15], ['中', 16], ['大', 18.5], ['特大', 21]].map(([l, px]) =>
       h('button', { 'aria-pressed': S.fs === px, style: `font-size:${px}px`, onclick: () => { S.fs = px; ls.set('fontPx', px); render(); } }, l))),
-    h('button', { class: 'btn ghost', onclick: async ev => { const b = ev.currentTarget; b.disabled = true; try { await api(); render(); updBadge(); toast('已更新到最新內容'); } catch (e) { toast(e.message); } finally { b.disabled = false; } } }, '↻ 重新整理，看最新內容'),
+    h('button', { class: 'btn ghost', onclick: async ev => { const b = ev.currentTarget; b.disabled = true; try { Object.keys(FILES).forEach(k => delete FILES[k]); await api(); render(); updBadge(); toast('已更新到最新內容'); } catch (e) { toast(e.message); } finally { b.disabled = false; } } }, '↻ 重新整理，看最新內容'),
     h('div', { class: 'note' }, '版本 ' + VERSION),
     S.admin ? h('button', { class: 'link-btn', onclick: logout }, '登出管理者') : h('button', { class: 'link-btn', onclick: login }, '管理者登入'));
 }
@@ -1017,7 +1223,8 @@ function adminMenu() {
       item('新增報名活動', '活動會同時出現在行事曆', () => go({ tab: 'edit', evId: null, newDay: null, afterOpen: true, ret: { tab: 'sig' } })),
       item('新增公告', '大家打開網頁時會先看到', () => go({ tab: 'annEdit', annId: null })),
       item('小組與小組長', '新增、改名、搬到別的小組、刪除', () => go({ tab: 'groups', ret: { tab: S.tab } })),
-      item('類別', '在行事曆的「類別 ▾」裡新增', () => go({ tab: 'cal', ddOpen: true }))),
+      item('類別', '在行事曆的「類別 ▾」裡新增', () => go({ tab: 'cal', ddOpen: true })),
+      item('共享檔案', '新增資料夾、上傳、改名、刪除', () => go({ tab: 'files' }))),
     h('button', { class: 'btn ghost', onclick: () => { close(); logout(); } }, '登出管理者')));
   document.body.append(sc);
 }
@@ -1080,15 +1287,16 @@ function render() {
   applyFs();
   if (!S.loaded) return;
   updBadge();
-  const tabOf = { cal: 'tCal', edit: 'tCal', sig: 'tSig', sigd: 'tSig', open: 'tSig', signup: 'tSig', ann: 'tAnn', annEdit: 'tAnn' };
-  ['tCal', 'tSig', 'tAnn'].forEach(id => document.getElementById(id).setAttribute('aria-selected', String(tabOf[S.tab] === id)));
+  const tabOf = { cal: 'tCal', edit: 'tCal', sig: 'tSig', sigd: 'tSig', open: 'tSig', signup: 'tSig', ann: 'tAnn', annEdit: 'tAnn', files: 'tFile' };
+  ['tCal', 'tSig', 'tAnn', 'tFile'].forEach(id => document.getElementById(id).setAttribute('aria-selected', String(tabOf[S.tab] === id)));
   document.getElementById('adminPill').replaceChildren(S.admin ? h('button', { class: 'pill-btn', onclick: adminMenu }, '管理 ▾') : '');
   ({ cal: viewCal, edit: viewEdit, open: viewOpen, sig: viewSig, sigd: viewSigD, ann: viewAnn, annEdit: viewAnnEdit,
-     pick: viewPick, me: viewMe, fill: viewFill, signup: viewSignup, groups: viewGroups })[S.tab]();
+     pick: viewPick, me: viewMe, fill: viewFill, signup: viewSignup, groups: viewGroups, files: viewFiles })[S.tab]();
 }
 document.getElementById('tCal').addEventListener('click', () => go({ tab: 'cal' }));
 document.getElementById('tSig').addEventListener('click', () => go({ tab: 'sig' }));
 document.getElementById('tAnn').addEventListener('click', () => go({ tab: 'ann' }));
+document.getElementById('tFile').addEventListener('click', () => { if (S.tab === 'files') { Object.keys(FILES).forEach(k => delete FILES[k]); S.folder = null; } go({ tab: 'files' }); });
 
 (async function start() {
   applyFs();
