@@ -363,22 +363,65 @@ body.big .tabs button{font-size:.95rem}
 .tabs button[aria-selected="true"]{background:var(--paper);color:var(--hl);box-shadow:0 0 0 2px var(--hl) inset}
 .tabs button[aria-selected="true"] .tn{background:var(--hl);color:#fff}
 body.big .tic{width:1.8rem;height:1.8rem}
+/* 標題區：LOGO＋標題＋今天日期 */
+.brand{display:flex;align-items:center;gap:10px;padding-bottom:2px}
+.hlogo{flex:0 0 auto;width:3.1rem;height:3.1rem;border-radius:14px;background:#fff;border:1px solid var(--tab-line);display:grid;place-items:center;box-shadow:0 2px 8px rgba(31,59,50,.08)}
+.hlogo img{width:80%;height:80%;object-fit:contain;display:block}
+.htx{flex:1;min-width:0}
+.top .htx small{font-size:.76rem;letter-spacing:.06em;white-space:nowrap}
+.top .htx h1{margin:2px 0 2px;font-size:1.3rem;line-height:1.25;white-space:nowrap}
+.htx .macaron{margin:4px 0 0}
+.hdate{flex:0 0 auto;display:flex;align-items:stretch;gap:10px;align-self:stretch}
+.hbar{width:1px;background:var(--tab-line);margin:4px 0}
+.hdt{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;line-height:1.15}
+.hday{font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--hl)}
+.hmd{font-size:1.5rem;font-weight:700;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.hdt .pill-btn{margin-top:4px}
+body.big .hbar,body.big .hday,body.big .hmd{display:none}
+@media (max-width:359px){.hbar,.hday,.hmd{display:none}}
+/* 分頁列固定（往下滑時縮小） */
+.top .wrap.hwrap{padding-bottom:0}
+.tabbar{position:sticky;top:0;z-index:15}
+.tabbar .wrap{padding-block:8px 12px}
+.tabbar .tabs{margin-top:0}
+.tabbar.stuck{padding-top:env(safe-area-inset-top,0px);box-shadow:0 4px 12px rgba(31,59,50,.14)}
+.tabbar.stuck .wrap{padding-block:6px}
+.tabbar.stuck .tabs{margin-top:0}
+.tabbar.stuck .tabs button{flex-direction:row;justify-content:center;gap:4px;padding:7px 2px;font-size:.95rem;white-space:nowrap}
+.tabbar.stuck .tic{width:1.45rem;height:1.45rem;border-radius:6px;flex:0 0 auto}
+.tabbar.stuck .tn{min-width:1rem;height:1rem;font-size:.68rem}
+.tabbar.stuck .tn:empty{display:none}
+body.big .tabbar.stuck .tic{display:none}
+/* 下方漂浮按鈕 */
+.dock{background:transparent;border-top:0;pointer-events:none;padding-top:0}
+.dock .btn.float{pointer-events:auto;display:flex;align-items:center;justify-content:center;gap:10px;width:auto;min-width:13rem;max-width:calc(100% - 8px);margin:0 auto;min-height:3.4rem;padding:8px 26px;border-radius:999px;background:var(--h-pink-l);color:#fff;font-size:1.15rem;box-shadow:0 10px 24px rgba(176,74,102,.4),0 2px 6px rgba(0,0,0,.12);transition:transform .08s}
+.dock .btn.float:active{transform:translateY(2px)}
+.dock .btn.float svg{width:1.5rem;height:1.5rem;flex:0 0 auto}
 
+
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .dock .btn.float{color:#1A1418}}
+:root[data-theme="dark"] .dock .btn.float{color:#1A1418}
 body{margin:0}
 </style>
 </head>
 <body>
-<header class="top pink" id="top"><div class="wrap">
-  <div class="hrow"><div><small>行事曆・活動報名・公告・檔案</small><h1>盈欣牧區小組平台</h1></div><div id="adminPill"></div></div>
-  <div class="macaron" aria-hidden="true"><i class="g0"></i><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="g4"></i></div>
-  <div class="tabs" role="tablist"><button role="tab" id="tCal"><span class="tic tc1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="tl">行事曆</span></button><button role="tab" id="tSig"><span class="tic tc2" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><rect x="9" y="2.5" width="6" height="3.5" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span><span class="tl">報名</span></button><button role="tab" id="tAnn"><span class="tic tc3" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5v3a1 1 0 0 0 1 1h2.5L13 19V5L7.5 9.5H5a1 1 0 0 0-1 1z"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10"/></svg></span><span class="tl">公告<span class="tn" id="annN"></span></span></button><button role="tab" id="tFile"><span class="tic tc4" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2.2h7.5A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg></span><span class="tl">檔案</span></button></div>
+<header class="top pink" id="top"><div class="wrap hwrap">
+  <div class="brand">
+    <span class="hlogo"><img src="data:image/png;base64,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" alt="真道教會標誌" width="72" height="72"></span>
+    <div class="htx"><small>行事曆・報名・公告・檔案</small><h1>盈欣牧區小組平台</h1>
+      <div class="macaron" aria-hidden="true"><i class="g0"></i><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="g4"></i></div></div>
+    <div class="hdate"><span class="hbar" aria-hidden="true"></span><div class="hdt"><span class="hday" id="hW"></span><b class="hmd" id="hMD"></b><div id="adminPill"></div></div></div>
+  </div>
 </div></header>
+<div class="tabbar top pink" id="tabbar"><div class="wrap">
+  <div class="tabs" role="tablist"><button role="tab" id="tCal"><span class="tic tc1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="tl">行事曆</span></button><button role="tab" id="tSig"><span class="tic tc2" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><rect x="9" y="2.5" width="6" height="3.5" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span><span class="tl">報名</span></button><button role="tab" id="tAnn"><span class="tic tc3" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5v3a1 1 0 0 0 1 1h2.5L13 19V5L7.5 9.5H5a1 1 0 0 0-1 1z"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10"/></svg></span><span class="tl">公告<span class="tn" id="annN"></span></span></button><button role="tab" id="tFile"><span class="tic tc4" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2.2h7.5A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg></span><span class="tl">檔案</span></button></div>
+</div></div>
 <main class="wrap" id="app"><div class="loading">正在載入…</div></main>
 <div class="dock" id="dock" hidden></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbwcvIkeVBoj-OwVBa6kHai4q-_-5tgC_DbYy63IPP4BZt__TTZ6gIyos_J6PIDCTI94/exec';
-const VERSION = '1114-2200';
+const VERSION = '1115-1830';
 const WEEKLY_CAT = '小組活動';
 
 /* ---------- 日期 ---------- */
@@ -447,7 +490,7 @@ function sigState(e) { if (!e.sig) return null; if (e.s < TODAY) return ['已結
   if (e.sig.deadline != null && TODAY > e.sig.deadline) return ['已截止', 'closed']; return ['報名中', 'open']; }
 function sigStats(e) { const s = SIG[e.id] || {}; const ls2 = leaders().filter(n => s[n] && s[n].count); return { s, groups: ls2.length, people: ls2.reduce((t, n) => t + s[n].count, 0) }; }
 let tt; function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2600); }
-function go(o) { Object.assign(S, o); render(); window.scrollTo(0, 0); }
+function go(o) { Object.assign(S, o); render(); window.scrollTo(0, 0); stickTabs(); }
 function back() { const r = S.ret || { tab: 'cal' }; S.ret = null; go(r); }
 function field(lbl, el) { return [h('label', { for: el.id }, lbl), el]; }
 const okUrl = u => /^https?:\/\/\S+\.\S+/.test(u);
@@ -672,7 +715,7 @@ function viewCal() {
   else if (S.view === 'week') body = weekView();
   else body = [monthGrid(S.mi), S.fs >= 18.5 ? h('div', { class: 'hint' }, '大字模式：月曆只顯示色條，點日期或往下看清單。') : null, weekLists(S.mi)];
   setApp(controls(), body, footer());
-  dock('我是小組長，我要填寫', () => go({ tab: 'pick', next: null, ret: { tab: 'cal' } }));
+  dock('小組報名', () => go({ tab: 'pick', next: null, ret: { tab: 'cal' } }));
 }
 
 /* ---------- 活動詳情 ---------- */
@@ -685,7 +728,7 @@ function sheet(e) {
       h('div', { class: 'sheet ' + cls(e) }, h('button', { class: 'x', onclick: close }, '關閉'),
         h('span', { class: 'who', style: 'justify-self:start;font-size:.95rem' }, (g.c ? g.c + '｜' : '') + e.leader), h('h2', null, e.n),
         h('div', { class: 'meta' }, e.dated ? fw(e.s) : `${fd(e.sun)}–${fd(e.sun + 6)} 這一週（沒有填日期）`),
-        h('div', { class: 'note' }, '小組活動由小組長自己填寫，想修改請到「我是小組長，我要填寫」。')));
+        h('div', { class: 'note' }, '小組活動由小組長自己填寫，想修改請到下方「小組報名」。')));
     document.body.append(sc); return;
   }
   const st = sigState(e), ov = overlaps(e), acts = [];
@@ -827,7 +870,7 @@ function viewSig() {
     S.showPastEv ? past.map(evCard) : null,
     S.admin ? h('button', { class: 'btn ghost wide', onclick: () => go({ tab: 'edit', evId: null, newDay: null, afterOpen: true, ret: { tab: 'sig' } }) }, '＋ 新增報名活動') : null,
     footer());
-  dock('我是小組長，我要填寫', () => go({ tab: 'pick', next: null, ret: { tab: 'sig' } }));
+  dock('小組報名', () => go({ tab: 'pick', next: null, ret: { tab: 'sig' } }));
 }
 function viewSigD() {
   const e = EV.find(x => x.id === S.evId);
@@ -992,7 +1035,7 @@ function viewAnnEdit() {
   const f = { t: h('input', { id: 'a-t', value: a.title, maxlength: 30, placeholder: '例：12/25 聖誕戲劇報名開始了' }), b: h('textarea', { id: 'a-b', maxlength: 1000, placeholder: '要告訴大家的內容，可以換行' }, a.body),
     s: h('input', { id: 'a-s', type: 'date', value: iso(a.start) }), e: h('input', { id: 'a-e', type: 'date', value: iso(a.end) }),
     l: h('select', { id: 'a-l' }, h('option', { value: '' }, '不需要按鈕'), h('option', { value: 'url', selected: a.link === 'url' }, '開啟網址（貼上連結）'),
-      h('option', { value: 'fill', selected: a.link === 'fill' }, '前往「我是小組長，我要填寫」'),
+      h('option', { value: 'fill', selected: a.link === 'fill' }, '前往「小組報名」'),
       evOpts.map(e => h('option', { value: 'event:' + e.id, selected: a.link === 'event' && a.target === e.id }, '活動報名：' + e.n))) };
   const L = linkFields('a', a.link === 'url' ? a.target : '', a.urlText);
   const showL = () => { L.el.hidden = f.l.value !== 'url'; };
@@ -1281,7 +1324,15 @@ function leaderSheet(g, n) {
 }
 
 /* ---------- 外框 ---------- */
-function dock(label, fn) { const d = document.getElementById('dock'); d.hidden = !label; d.replaceChildren(label ? h('button', { class: 'btn', onclick: fn }, label) : ''); }
+const PEN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
+function dock(label, fn) {
+  const d = document.getElementById('dock'); d.hidden = !label;
+  if (!label) return d.replaceChildren('');
+  const b = h('button', { class: 'btn float', onclick: fn }); b.innerHTML = PEN_SVG; b.append(h('span', null, label));
+  d.replaceChildren(b);
+}
+function stickTabs() { const t = document.getElementById('tabbar'); t.classList.toggle('stuck', window.scrollY > 0 && t.getBoundingClientRect().top <= 1); }
+window.addEventListener('scroll', stickTabs, { passive: true }); window.addEventListener('resize', stickTabs);
 function applyFs() { document.documentElement.style.fontSize = S.fs + 'px'; document.body.classList.toggle('big', S.fs >= 18.5); }
 function render() {
   applyFs();
@@ -1289,6 +1340,7 @@ function render() {
   updBadge();
   const tabOf = { cal: 'tCal', edit: 'tCal', sig: 'tSig', sigd: 'tSig', open: 'tSig', signup: 'tSig', ann: 'tAnn', annEdit: 'tAnn', files: 'tFile' };
   ['tCal', 'tSig', 'tAnn', 'tFile'].forEach(id => document.getElementById(id).setAttribute('aria-selected', String(tabOf[S.tab] === id)));
+  document.getElementById('hW').textContent = '週' + W[wd(TODAY)]; document.getElementById('hMD').textContent = mo(TODAY) + '.' + String(da(TODAY)).padStart(2, '0');
   document.getElementById('adminPill').replaceChildren(S.admin ? h('button', { class: 'pill-btn', onclick: adminMenu }, '管理 ▾') : '');
   ({ cal: viewCal, edit: viewEdit, open: viewOpen, sig: viewSig, sigd: viewSigD, ann: viewAnn, annEdit: viewAnnEdit,
      pick: viewPick, me: viewMe, fill: viewFill, signup: viewSignup, groups: viewGroups, files: viewFiles })[S.tab]();
