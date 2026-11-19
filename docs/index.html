@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>平台搬家了｜盈欣牧區小組平台</title>
+<style>
+/*
+VOICE: 溫柔、清楚、長輩一看就懂
+IDEA: 搬家通知卡
+PICTURE: 粉色房子圖示＋大大的新網址
+COLOUR and TYPE: 平台霧粉、深粉按鈕 #B04A66；系統字體
+LAYOUT: 單欄置中，按鈕放大
+*/
+:root{color-scheme:light dark;--bg:light-dark(#FBF4F6,#1E1719);--card:light-dark(#fff,#2A2124);--ink:light-dark(#2B2326,#F4ECEE);--sub:light-dark(#6E6266,#C9BCC0);--pink:#B04A66;--pinkl:light-dark(#F6DCE3,#4A2F37)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px 18px}
+.card{background:var(--card);border-radius:28px;max-width:440px;width:100%;padding:36px 26px 30px;text-align:center;box-shadow:0 10px 40px rgba(176,74,102,.12)}
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:18px}
+.dots i{width:10px;height:10px;border-radius:50%}
+.house{width:96px;height:96px;margin:0 auto 14px}
+.small{font-size:16px;color:var(--sub);margin:0}
+h1{font-size:30px;line-height:1.25;margin:4px 0 18px}
+.addr{background:var(--pinkl);border-radius:16px;padding:14px 10px;margin:0 0 20px}
+.addr .lb{font-size:15px;color:var(--sub)}
+.addr b{display:block;font-size:22px;color:var(--pink);word-break:break-all;letter-spacing:.3px}
+.count{font-size:19px;margin:0 0 16px}
+.count b{color:var(--pink);font-size:26px}
+.btn{display:block;width:100%;min-height:60px;border:0;border-radius:30px;background:var(--pink);color:#fff;font:700 21px/60px inherit;font-family:inherit;text-decoration:none;cursor:pointer}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.tip{margin:22px 0 0;text-align:left;background:var(--bg);border-radius:16px;padding:14px 16px;font-size:16px;color:var(--sub)}
+.tip strong{color:var(--ink)}
+.demo{margin-top:18px;font-size:13px;color:var(--sub)}
+@media (prefers-reduced-motion:no-preference){.house{animation:bob 2.4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-5px)}}}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="dots" aria-hidden="true"><i style="background:#E3A98B"></i><i style="background:#7FBF9C"></i><i style="background:#E58FA6"></i><i style="background:#8FAEE3"></i><i style="background:#E8C77A"></i></div>
+  <svg class="house" viewBox="0 0 96 96" aria-hidden="true">
+    <path d="M14 44 48 16l34 28v38a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6z" fill="#F6DCE3"/>
+    <path d="M8 46 48 13l40 33" fill="none" stroke="#B04A66" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M48 74s-16-9.5-16-20a8.5 8.5 0 0 1 16-4 8.5 8.5 0 0 1 16 4c0 10.5-16 20-16 20z" fill="#E58FA6"/>
+  </svg>
+  <p class="small">盈欣牧區小組平台</p>
+  <h1>我們搬家了！</h1>
+  <div class="addr"><div class="lb">新網址</div><b id="newAddr">jesuslovesme-tc.pages.dev</b></div>
+  <p class="count" id="count"><b id="sec">3</b> 秒後自動前往新平台</p>
+  <a class="btn" id="go" href="#">前往新平台</a>
+  <div class="tip"><strong>📱 小提醒：</strong>如果你有把平台「加到主畫面」，到新平台後請<strong>再加一次</strong>，並刪掉舊的圖示。字體大小、小組長名字也要重新選一次。</div>
+  <p class="demo" id="demo">（這是示意，不會真的跳轉）</p>
+</main>
+<script>
+{
+  const NEW_SITE = 'https://jesuslovesme-tc.pages.dev/';
+  const PREVIEW = false;
+  const target = NEW_SITE + location.search + location.hash; // 保留 ?openExternalBrowser=1
+  const go = document.getElementById('go');
+  const sec = document.getElementById('sec');
+  go.href = PREVIEW ? '#' : target;
+  let n = 3;
+  const tick = setInterval(() => {
+    n--;
+    if (n > 0) { sec.textContent = n; return; }
+    clearInterval(tick);
+    if (PREVIEW) { document.getElementById('count').textContent = '（正式版這時會自動跳到新平台）'; }
+    else { location.replace(target); }
+  }, 1000);
+  go.addEventListener('click', e => { if (PREVIEW) e.preventDefault(); });
+  if (!PREVIEW) document.getElementById('demo').remove();
+}
+</script>
+</body>
+</html>
